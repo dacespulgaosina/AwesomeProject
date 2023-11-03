@@ -13,6 +13,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -62,6 +63,15 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+const RoundedOrangeButton = () => {
+  return (
+    <TouchableOpacity style={styles.buttonContainer}>
+      <Text style={styles.buttonText}>Click Me</Text>
+    </TouchableOpacity>
+  );
+};
+
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <StatusBar
@@ -76,10 +86,7 @@ function App(): JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step 1">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
+          <RoundedOrangeButton/>
           <Section title="See Your Changes">
             <ReloadInstructions />
           </Section>
@@ -112,6 +119,18 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+
+ buttonContainer: {
+    backgroundColor: 'orange',
+    borderRadius: 10, // Adjust this value to control the roundness
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 
