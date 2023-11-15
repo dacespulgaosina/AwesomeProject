@@ -66,7 +66,7 @@ function App(): JSX.Element {
 const RoundedOrangeButton = () => {
   return (
     <TouchableOpacity style={styles.buttonContainer}>
-      <Text style={styles.buttonText}>Click Me</Text>
+      <Text style={styles.buttonText}>Create Note</Text>
     </TouchableOpacity>
   );
 };
@@ -87,16 +87,7 @@ const RoundedOrangeButton = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <RoundedOrangeButton/>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+       
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -123,8 +114,8 @@ const styles = StyleSheet.create({
 
  buttonContainer: {
     backgroundColor: 'orange',
-    borderRadius: 10, // Adjust this value to control the roundness
-    padding: 10,
+    borderRadius: 30, // Adjust this value to control the roundness
+    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
