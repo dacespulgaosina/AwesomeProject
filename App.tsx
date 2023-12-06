@@ -34,6 +34,10 @@ import {
 
 import RNFS from 'react-native-fs';
 
+import SQLite from 'react-native-sqlite-2';
+
+
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -53,7 +57,24 @@ function App(): JSX.Element {
   };
  
   const addNote = () => {
-console.log('Add Note')
+var SQLite = require('react-native-sqlite-storage');
+
+console.log('Add Note');
+const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+db.transaction(function(txn) {
+  txn.executeSql('DROP TABLE IF EXISTS Users', [])
+  txn.executeSql(
+    'CREATE TABLE IF NOT EXISTS Users(user_id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(30))',
+    []
+  )
+  txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['nora'])
+  txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['takuya'])
+  txn.executeSql('SELECT * FROM `users`', [], function(tx, res) {
+    for (let i = 0; i < res.rows.length; ++i) {
+      console.log('item:', res.rows.item(i))
+    }
+  })
+});
 }
 
 const RoundedOrangeButton = () => {
@@ -137,9 +158,17 @@ const readDataFromFile = async () => {
         <Picker.Item label="Due Date" value="dueDate" />
         <Picker.Item label="Title" value="title" />
       </Picker>
+      <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%'}]} onPress={addNote}>
       <Text style={styles.buttonText}>Add Note</Text>
       </Pressable>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={addNote}>
+      <Text style={styles.buttonText}>Drop</Text>
+      </Pressable>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={addNote}>
+      <Text style={styles.buttonText}>Create DB</Text>
+      </Pressable>
+    </View>
     </View>
     <View>
       <TextInput
@@ -172,6 +201,11 @@ const styles = StyleSheet.create({
 fontSize: 16,
 fontWeight: 'bold',
  },
+inputRow: {
+ flexDirection: 'row',
+ alignItems: 'center',
+ justifyContent: 'space-between',
+},
   container: {
     flex: 1,
     padding: 20,
