@@ -64,3 +64,12 @@ yarn-error.log
 
 # testing
 /coverage
+ 
+.editorconfig
+.gitattributes
+.pnp.cjs
+.yarn/
+yarn.lock
+
+
+

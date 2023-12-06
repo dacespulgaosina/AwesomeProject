@@ -69,13 +69,51 @@ db.transaction(function(txn) {
   )
   txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['nora'])
   txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['takuya'])
-  txn.executeSql('SELECT * FROM `users`', [], function(tx, res) {
+//  txn.executeSql('SELECT * FROM `users`', [], function(tx, res) {
+ //   for (let i = 0; i < res.rows.length; ++i) {
+ //     console.log('item:', res.rows.item(i))
+ //   }
+ // })
+txn.executeSql('SELECT * FROM `note`', [], function(tx, res) {
     for (let i = 0; i < res.rows.length; ++i) {
-      console.log('item:', res.rows.item(i))
+      console.log('note:', res.rows.item(i))
     }
   })
 });
-}
+};
+
+ const dropTables = () => {
+var SQLite = require('react-native-sqlite-storage');
+
+console.log('Drop tables');
+const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+db.transaction(function(txn) {
+  txn.executeSql('DROP TABLE IF EXISTS Users', []);
+  txn.executeSql('DROP TABLE IF EXISTS Note', []);
+});
+};
+
+ const createTables = () => {
+var SQLite = require('react-native-sqlite-storage');
+
+console.log('Create tables');
+const query = `CREATE TABLE IF NOT EXISTS note (
+    NoteID INTEGER PRIMARY KEY,
+    Priority INTEGER,
+    Text VARCHAR(300),
+    Image VARCHAR(50),
+    NotificationTime DATETIME,
+    Title VARCHAR(50)
+);`;
+
+const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+db.transaction(function(txn) {
+  txn.executeSql(query, []);
+txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title 1']);
+txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title 2']);
+});
+
+};
 
 const RoundedOrangeButton = () => {
   return (
@@ -162,10 +200,10 @@ const readDataFromFile = async () => {
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%'}]} onPress={addNote}>
       <Text style={styles.buttonText}>Add Note</Text>
       </Pressable>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={addNote}>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={dropTables}>
       <Text style={styles.buttonText}>Drop</Text>
       </Pressable>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={addNote}>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={createTables}>
       <Text style={styles.buttonText}>Create DB</Text>
       </Pressable>
     </View>
