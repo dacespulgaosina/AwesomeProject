@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import { Picker } from '@react-native-picker/picker';
 import {
+  AppRegistry,
   Button,
   Image,
   Pressable,
@@ -39,25 +40,40 @@ import SQLite from 'react-native-sqlite-2';
 
 
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+// type SectionProps = PropsWithChildren<{
+//   title: string;
+// }>;
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  const [selectedValue, setSelectedValue] = useState('newest');
-  const [data, setData] = useState({ key: 'value' });
-  const [inputValue, setInputValue] = useState('');
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    isDarkMode: false,
+    selectedValue: '',
+    inputValue: '',
+    backgroundStyle: {
+         backgroundColor: false ? Colors.darker : Colors.lighter,
+      },
+    
+    };
 
- 
+  // const isDarkMode = useColorScheme() === 'dark';
+  // const [selectedValue, setSelectedValue] = useState('newest');
+  // const [data, setData] = useState({ key: 'value' });
+  // const [inputValue, setInputValue] = useState('');
+   
+}
+setSelectedValue = (value) => {
+  this.setState({selectedValue: value});
+}
+setInputValue = (value) => {
+  this.setState({inputValue: value});
+}
+  // const backgroundStyle = {
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  // };
 
-  const filePath = 'data.json';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const addNote = () => {
+   addNote = () => {
     var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note');
@@ -81,7 +97,7 @@ function App(): JSX.Element {
 
   };
 
-  const dropTables = () => {
+   dropTables = () => {
     var SQLite = require('react-native-sqlite-storage');
 
     console.log('Drop tables');
@@ -92,7 +108,7 @@ function App(): JSX.Element {
     });
   };
 
-  const createTables = () => {
+   createTables = () => {
     var SQLite = require('react-native-sqlite-storage');
 
     console.log('Create tables');
@@ -113,17 +129,17 @@ function App(): JSX.Element {
     });
   };
 
-  const addNote2 = () => {
+   addNote2 = () => {
     //  var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note2');
   };
-  const createTables2 = () => {
+   createTables2 = () => {
 
 
     console.log('Create Table2');
   };
-  const dropTables2 = () => {
+   dropTables2 = () => {
     console.log('Drop tables2');
     // const commands = [
     //   [`CREATE TABLE IF NOT EXISTS note (
@@ -156,7 +172,7 @@ function App(): JSX.Element {
   };
    
 
-  const handlePickerChange = (itemValue: string) => {
+   handlePickerChange = (itemValue: string) => {
     // Do something with the selected value
     console.log('Selected Value:', itemValue);
     const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
@@ -166,7 +182,7 @@ function App(): JSX.Element {
     });
 
     // Update the state to reflect the selected value
-    setSelectedValue(itemValue);
+    this.setSelectedValue(this.state.itemValue);
     if (itemValue == "priority") {
       console.log('priority sort');
 
@@ -199,9 +215,13 @@ function App(): JSX.Element {
 
   };
 
-
+render() {
+const handlerProps = {
+  ...this.state,
+  handlePickerChange: this.handlePickerChange,
+}
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaView style={this.state.backgroundStyle}>
       <View style={styles.container}>
         <View style={styles.searchContainer}>
 
@@ -219,8 +239,8 @@ function App(): JSX.Element {
         <View style={styles.container}>
           <Text style={styles.label}>Sort by:</Text>
           <Picker
-            selectedValue={selectedValue}
-            onValueChange={handlePickerChange}
+            selectedValue={this.state.selectedValue}
+            onValueChange={this.handlePickerChange}
             style={styles.picker}
           >
             <Picker.Item label="Newest First" value="newest" />
@@ -231,26 +251,26 @@ function App(): JSX.Element {
         </View>
         <View style={styles.container}>
           <View style={styles.inputRow}>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={addNote}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
               <Text style={styles.buttonText}>Add Note</Text>
             </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={dropTables}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
               <Text style={styles.buttonText}>Drop</Text>
             </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={createTables}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
               <Text style={styles.buttonText}>Create DB</Text>
             </Pressable>
           </View>
         </View>
         <View style={styles.container}>
           <View style={styles.inputRow}>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={addNote2}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote2}>
               <Text style={styles.buttonText}>Add Note2</Text>
             </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={dropTables2}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables2}>
               <Text style={styles.buttonText}>Drop2</Text>
             </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={createTables2}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables2}>
               <Text style={styles.buttonText}>Create DB2</Text>
             </Pressable>
           </View>
@@ -258,7 +278,7 @@ function App(): JSX.Element {
         <View>
           <TextInput
             placeholder="Enter a value"
-            value={inputValue}
+            value={this.state.inputValue}
             onChangeText={(text) => setInputValue(text)}
           />
           {/* <Button title="Save to File" onPress={writeDataToFile} /> */}
@@ -267,7 +287,7 @@ function App(): JSX.Element {
     </SafeAreaView>
   );
 }
-
+}
 const styles = StyleSheet.create({
   button: {
     marginBottom: 10,
@@ -333,4 +353,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default MyComponent;
+AppRegistry.registerComponent('App', () => MyComponent);
