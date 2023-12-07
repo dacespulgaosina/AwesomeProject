@@ -57,10 +57,14 @@ class MyComponent extends React.Component {
     
     };
 
-  // const isDarkMode = useColorScheme() === 'dark';
-  // const [selectedValue, setSelectedValue] = useState('newest');
-  // const [data, setData] = useState({ key: 'value' });
-  // const [inputValue, setInputValue] = useState('');
+    var SQLite = require('react-native-sqlite-storage');
+
+    this.db = SQLite.openDatabase(
+      { name: 'test.db', createFromLocation: 1 },
+      this.dbOpenSuccess,
+      this.dbOpenError
+    );
+  
    
 }
 setSelectedValue = (value) => {
@@ -69,17 +73,28 @@ setSelectedValue = (value) => {
 setInputValue = (value) => {
   this.setState({inputValue: value});
 }
-  // const backgroundStyle = {
-  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  // };
+  
+componentWillUnmount() {
+  // Close the database connection when the component is about to unmount
+  // this.db.close();
+}
+  dbOpenSuccess = () => {
+    console.log('Database opened successfully');
+    // Perform any additional setup or actions after the database is opened
+  };
+
+  // Callback when there's an error opening the database
+  dbOpenError = (error) => {
+    console.error('Error opening database:', error);
+  };
 
    addNote = () => {
-    var SQLite = require('react-native-sqlite-storage');
+   // var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note');
 
-    const db = SQLite.openDatabase('test.db', '1.0', '', 1)
-    db.transaction(function (txn) {
+    //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+    this.db.transaction(function (txn) {
       txn.executeSql('DROP TABLE IF EXISTS Users', [])
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS Users(user_id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(30))',
@@ -98,18 +113,18 @@ setInputValue = (value) => {
   };
 
    dropTables = () => {
-    var SQLite = require('react-native-sqlite-storage');
+    //var SQLite = require('react-native-sqlite-storage');
 
     console.log('Drop tables');
-    const db = SQLite.openDatabase('test.db', '1.0', '', 1)
-    db.transaction(function (txn) {
+    //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+    this.db.transaction(function (txn) {
       txn.executeSql('DROP TABLE IF EXISTS Users', []);
       txn.executeSql('DROP TABLE IF EXISTS Note', []);
     });
   };
 
    createTables = () => {
-    var SQLite = require('react-native-sqlite-storage');
+    //var SQLite = require('react-native-sqlite-storage');
 
     console.log('Create tables');
     const query = `CREATE TABLE IF NOT EXISTS note (
@@ -121,8 +136,8 @@ setInputValue = (value) => {
     Title VARCHAR(50)
 );`;
 
-    const db = SQLite.openDatabase('test.db', '1.0', '', 1)
-    db.transaction(function (txn) {
+    //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+    this.db.transaction(function (txn) {
       txn.executeSql(query, []);
       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']);
       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']);
@@ -175,18 +190,18 @@ setInputValue = (value) => {
    handlePickerChange = (itemValue: string) => {
     // Do something with the selected value
     console.log('Selected Value:', itemValue);
-    const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
-      console.log('Database opened successfully');
-    }, (error) => {
-      console.error('Error opening database:', error);
-    });
+    //const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
+    //   console.log('Database opened successfully');
+    // }, (error) => {
+    //   console.error('Error opening database:', error);
+    // });
 
     // Update the state to reflect the selected value
     this.setSelectedValue(this.state.itemValue);
     if (itemValue == "priority") {
       console.log('priority sort');
 
-      db.transaction(function (txn) {
+      this.db.transaction(function (txn) {
         txn.executeSql('SELECT * FROM `note` ORDER BY `Priority`', [], function (tx, res) {
           for (let i = 0; i < res.rows.length; ++i) {
             console.log('note:', res.rows.item(i))
@@ -196,13 +211,13 @@ setInputValue = (value) => {
     }
     else if (itemValue == 'title') {
       console.log('title sort');
-      const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
-        console.log('Database opened successfully');
-      }, (error) => {
-        console.error('Error opening database:', error);
-      });
-      db.transaction(function (txn) {
-        txn.executeSql('SELECT * FROM `note`', [], function (tx, res) {
+      // const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
+      //   console.log('Database opened successfully');
+      // }, (error) => {
+      //   console.error('Error opening database:', error);
+      // });
+      this.db.transaction(function (txn) {
+        txn.executeSql('SELECT * FROM `note` ORDER BY `Title`', [], function (tx, res) {
           for (let i = 0; i < res.rows.length; ++i) {
             console.log('note:', res.rows.item(i))
           }
