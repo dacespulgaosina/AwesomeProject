@@ -6,8 +6,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import type {PropsWithChildren} from 'react';
-import {Picker} from '@react-native-picker/picker';
+import type { PropsWithChildren } from 'react';
+import { Picker } from '@react-native-picker/picker';
 import {
   Button,
   Image,
@@ -21,7 +21,7 @@ import {
   TouchableOpacity,
   useColorScheme,
   View,
-  
+
 } from 'react-native';
 
 import {
@@ -38,6 +38,7 @@ import SQLite from 'react-native-sqlite-2';
 
 
 
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
@@ -45,59 +46,57 @@ type SectionProps = PropsWithChildren<{
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedValue, setSelectedValue] = useState('newest');
-   const [data, setData] = useState({ key: 'value' });
+  const [data, setData] = useState({ key: 'value' });
   const [inputValue, setInputValue] = useState('');
 
-  //const filePath = RNFS.DocumentDirectoryPath + '/data.json';
+ 
 
-   const filePath = 'data.json';
+  const filePath = 'data.json';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
- 
+
   const addNote = () => {
-var SQLite = require('react-native-sqlite-storage');
+    var SQLite = require('react-native-sqlite-storage');
 
-console.log('Add Note');
-const db = SQLite.openDatabase('test.db', '1.0', '', 1)
-db.transaction(function(txn) {
-  txn.executeSql('DROP TABLE IF EXISTS Users', [])
-  txn.executeSql(
-    'CREATE TABLE IF NOT EXISTS Users(user_id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(30))',
-    []
-  )
-  txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['nora'])
-  txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['takuya'])
-//  txn.executeSql('SELECT * FROM `users`', [], function(tx, res) {
- //   for (let i = 0; i < res.rows.length; ++i) {
- //     console.log('item:', res.rows.item(i))
- //   }
- // })
-txn.executeSql('SELECT * FROM `note`', [], function(tx, res) {
-    for (let i = 0; i < res.rows.length; ++i) {
-      console.log('note:', res.rows.item(i))
-    }
-  })
-});
-};
+    console.log('Add Note');
 
- const dropTables = () => {
-var SQLite = require('react-native-sqlite-storage');
+    const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+    db.transaction(function (txn) {
+      txn.executeSql('DROP TABLE IF EXISTS Users', [])
+      txn.executeSql(
+        'CREATE TABLE IF NOT EXISTS Users(user_id INTEGER PRIMARY KEY NOT NULL, name VARCHAR(30))',
+        []
+      )
+      txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['nora'])
+      txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['takuya'])
+     
+      txn.executeSql('SELECT * FROM `note`', [], function (tx, res) {
+        for (let i = 0; i < res.rows.length; ++i) {
+          console.log('note:', res.rows.item(i))
+        }
+      })
+    });
 
-console.log('Drop tables');
-const db = SQLite.openDatabase('test.db', '1.0', '', 1)
-db.transaction(function(txn) {
-  txn.executeSql('DROP TABLE IF EXISTS Users', []);
-  txn.executeSql('DROP TABLE IF EXISTS Note', []);
-});
-};
+  };
 
- const createTables = () => {
-var SQLite = require('react-native-sqlite-storage');
+  const dropTables = () => {
+    var SQLite = require('react-native-sqlite-storage');
 
-console.log('Create tables');
-const query = `CREATE TABLE IF NOT EXISTS note (
+    console.log('Drop tables');
+    const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+    db.transaction(function (txn) {
+      txn.executeSql('DROP TABLE IF EXISTS Users', []);
+      txn.executeSql('DROP TABLE IF EXISTS Note', []);
+    });
+  };
+
+  const createTables = () => {
+    var SQLite = require('react-native-sqlite-storage');
+
+    console.log('Create tables');
+    const query = `CREATE TABLE IF NOT EXISTS note (
     NoteID INTEGER PRIMARY KEY,
     Priority INTEGER,
     Text VARCHAR(300),
@@ -106,146 +105,194 @@ const query = `CREATE TABLE IF NOT EXISTS note (
     Title VARCHAR(50)
 );`;
 
-const db = SQLite.openDatabase('test.db', '1.0', '', 1)
-db.transaction(function(txn) {
-  txn.executeSql(query, []);
-txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title 1']);
-txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title 2']);
-});
-
-};
-
-const RoundedOrangeButton = () => {
-  return (
-    <TouchableOpacity style={styles.buttonContainer}>
-      <Text style={styles.buttonText}>Create Note</Text>
-    </TouchableOpacity>
-  );
-};
-
- useEffect(() => {
-    // Load data from the file when the component mounts
-    readDataFromFile();
-  }, []);
-/**
-  const readDataFromFile = async () => {
-    try {
-      const fileContent = await RNFS.readFile(filePath);
-      const jsonData = JSON.parse(fileContent);
-      setData(jsonData);
-    } catch (error) {
-      console.error('Error reading file:', error);
-    }
+    const db = SQLite.openDatabase('test.db', '1.0', '', 1)
+    db.transaction(function (txn) {
+      txn.executeSql(query, []);
+      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']);
+      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']);
+    });
   };
-**/
 
-const readDataFromFile = async () => {
-  try {
-    const fileExists = await RNFS.exists(filePath);
+  const addNote2 = () => {
+    //  var SQLite = require('react-native-sqlite-storage');
 
-    if (fileExists) {
-     // const fileContent = await RNFS.readFile(filePath);
-      const fileContent = await RNFS.readFileAssets(filePath);
-      const jsonData = JSON.parse(fileContent);
-      setData(jsonData);
-    } else {
-      console.warn('File does not exist:', filePath);
-      // You might choose to handle this case differently based on your requirements
+    console.log('Add Note2');
+  };
+  const createTables2 = () => {
+
+
+    console.log('Create Table2');
+  };
+  const dropTables2 = () => {
+    console.log('Drop tables2');
+    // const commands = [
+    //   [`CREATE TABLE IF NOT EXISTS note (
+    //     NoteID INTEGER PRIMARY KEY,
+    //     Priority INTEGER,
+    //     Text VARCHAR(300),
+    //     Image VARCHAR(50),
+    //     NotificationTime DATETIME,
+    //     Title VARCHAR(50)
+    // );`],
+    //   ['INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', 
+    //   [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']],
+    //   ['INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)',
+    //   [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']],
+    // ];
+
+    //const res = QuickSQLite.executeSqlBatch('myDatabase', commands);
+    // QuickSQLite.executeSqlBatch(
+    //   // Specify the database name as a string
+    //   'myDatabase',
+    //   commands,
+    //   // Success callback
+    //   (result) => {
+    //     console.log('Batch executed successfully:', result);
+    //   },
+    //   // Error callback
+    //   (error) => {
+    //     console.error('Error executing batch:', error);
+    //   }
+  };
+   
+
+  const handlePickerChange = (itemValue: string) => {
+    // Do something with the selected value
+    console.log('Selected Value:', itemValue);
+    const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
+      console.log('Database opened successfully');
+    }, (error) => {
+      console.error('Error opening database:', error);
+    });
+
+    // Update the state to reflect the selected value
+    setSelectedValue(itemValue);
+    if (itemValue == "priority") {
+      console.log('priority sort');
+
+      db.transaction(function (txn) {
+        txn.executeSql('SELECT * FROM `note` ORDER BY `Priority`', [], function (tx, res) {
+          for (let i = 0; i < res.rows.length; ++i) {
+            console.log('note:', res.rows.item(i))
+          }
+        })
+      });
     }
-  } catch (error) {
-    console.error('Error reading file:', error);
-  }
-};
+    else if (itemValue == 'title') {
+      console.log('title sort');
+      const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
+        console.log('Database opened successfully');
+      }, (error) => {
+        console.error('Error opening database:', error);
+      });
+      db.transaction(function (txn) {
+        txn.executeSql('SELECT * FROM `note`', [], function (tx, res) {
+          for (let i = 0; i < res.rows.length; ++i) {
+            console.log('note:', res.rows.item(i))
+          }
+        })
+      }, function (error) {
+        console.error('Error executing query:', error);
+      });
+    };
 
-  const writeDataToFile = async () => {
-    try {
-      const jsonString = JSON.stringify({ ...data, newKey: inputValue });
-      await RNFS.writeFile(filePath, jsonString, 'utf8');
-      readDataFromFile(); // Reload data after writing to update the state
-    } catch (error) {
-      console.error('Error writing file:', error);
-    }
+
   };
 
 
   return (
     <SafeAreaView style={backgroundStyle}>
-     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Search..."
-          placeholderTextColor="#A0A0A0"
-          underlineColorAndroid="transparent"
-        />
-<Image
-          source={require('./search-icon.png')} // Replace with the actual path to your search icon
-          style={styles.searchIcon}
-        />
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Search..."
+            placeholderTextColor="#A0A0A0"
+            underlineColorAndroid="transparent"
+          />
+          <Image
+            source={require('./search-icon.png')} // Replace with the actual path to your search icon
+            style={styles.searchIcon}
+          />
+        </View>
+        <View style={styles.container}>
+          <Text style={styles.label}>Sort by:</Text>
+          <Picker
+            selectedValue={selectedValue}
+            onValueChange={handlePickerChange}
+            style={styles.picker}
+          >
+            <Picker.Item label="Newest First" value="newest" />
+            <Picker.Item label="Priority" value="priority" />
+            <Picker.Item label="Due Date" value="dueDate" />
+            <Picker.Item label="Title" value="title" />
+          </Picker>
+        </View>
+        <View style={styles.container}>
+          <View style={styles.inputRow}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={addNote}>
+              <Text style={styles.buttonText}>Add Note</Text>
+            </Pressable>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={dropTables}>
+              <Text style={styles.buttonText}>Drop</Text>
+            </Pressable>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={createTables}>
+              <Text style={styles.buttonText}>Create DB</Text>
+            </Pressable>
+          </View>
+        </View>
+        <View style={styles.container}>
+          <View style={styles.inputRow}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={addNote2}>
+              <Text style={styles.buttonText}>Add Note2</Text>
+            </Pressable>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={dropTables2}>
+              <Text style={styles.buttonText}>Drop2</Text>
+            </Pressable>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={createTables2}>
+              <Text style={styles.buttonText}>Create DB2</Text>
+            </Pressable>
+          </View>
+        </View>
+        <View>
+          <TextInput
+            placeholder="Enter a value"
+            value={inputValue}
+            onChangeText={(text) => setInputValue(text)}
+          />
+          {/* <Button title="Save to File" onPress={writeDataToFile} /> */}
+        </View>
       </View>
- <View style={styles.container}>
-      <Text style={styles.label}>Sort by:</Text>
-      <Picker
-        selectedValue={selectedValue}
-        onValueChange={(itemValue) => setSelectedValue(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Newest First" value="newest" />
-        <Picker.Item label="Priority" value="priority" />
-        <Picker.Item label="Due Date" value="dueDate" />
-        <Picker.Item label="Title" value="title" />
-      </Picker>
-      <View style={styles.inputRow}>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%'}]} onPress={addNote}>
-      <Text style={styles.buttonText}>Add Note</Text>
-      </Pressable>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={dropTables}>
-      <Text style={styles.buttonText}>Drop</Text>
-      </Pressable>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%'}]} onPress={createTables}>
-      <Text style={styles.buttonText}>Create DB</Text>
-      </Pressable>
-    </View>
-    </View>
-    <View>
-      <TextInput
-        placeholder="Enter a value"
-        value={inputValue}
-        onChangeText={(text) => setInputValue(text)}
-      />
-      <Button title="Save to File" onPress={writeDataToFile} />
-    </View>
-    </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   button: {
-  marginBottom: 10,
-  marginLeft: 0,
-  height: 26,
-  alignItems: 'center',
-  justifyContent: 'center',
-  paddingHorizontal: 2,
- paddingVertical: 2,
- borderRadius: 6,
- elavation: 3,
-  backroundColor: 'black',
-},
+    marginBottom: 10,
+    marginLeft: 0,
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+    paddingVertical: 2,
+    borderRadius: 6,
+    elavation: 3,
+    backroundColor: 'black',
+  },
   buttonText: {
-  color: 'white',
-fontSize: 16,
-fontWeight: 'bold',
- },
-inputRow: {
- flexDirection: 'row',
- alignItems: 'center',
- justifyContent: 'space-between',
-},
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   container: {
-    flex: 1,
+    //flex: 1,
     padding: 20,
     justifyContent: 'center',
     paddingTop: Platform.OS === 'android' ? 50 : 50, // Adjust this value for Android
@@ -271,17 +318,18 @@ inputRow: {
     height: 40,
     color: '#000',
   },
- label: {
+  label: {
     fontSize: 16,
     marginRight: 8,
   },
- picker: {
+  picker: {
     borderWidth: 2,
     borderColor: '#A0A0A0',
     width: 150, // Adjust the width as needed
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
+    marginBottom: 20,
   },
 });
 

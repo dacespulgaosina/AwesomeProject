@@ -64,7 +64,7 @@ yarn-error.log
 
 # testing
 /coverage
- 
+
 .editorconfig
 .gitattributes
 .pnp.cjs
