@@ -133,14 +133,15 @@ componentWillUnmount() {
     Text VARCHAR(300),
     Image VARCHAR(50),
     NotificationTime DATETIME,
-    Title VARCHAR(50)
+    Title VARCHAR(50),
+    CreationTime DATETIME
 );`;
 
     //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
     this.db.transaction(function (txn) {
       txn.executeSql(query, []);
-      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']);
-      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']);
+      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']);
+      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']);
     });
   };
 
@@ -211,11 +212,7 @@ componentWillUnmount() {
     }
     else if (itemValue == 'title') {
       console.log('title sort');
-      // const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
-      //   console.log('Database opened successfully');
-      // }, (error) => {
-      //   console.error('Error opening database:', error);
-      // });
+      
       this.db.transaction(function (txn) {
         txn.executeSql('SELECT * FROM `note` ORDER BY `Title`', [], function (tx, res) {
           for (let i = 0; i < res.rows.length; ++i) {
@@ -227,6 +224,32 @@ componentWillUnmount() {
       });
     };
 
+    if (itemValue == 'dueDate') {
+      console.log('due sort');
+     
+      this.db.transaction(function (txn) {
+        txn.executeSql('SELECT * FROM `note` ORDER BY `NotificationTime`', [], function (tx, res) {
+          for (let i = 0; i < res.rows.length; ++i) {
+            console.log('note:', res.rows.item(i))
+          }
+        })
+      }, function (error) {
+        console.error('Error executing query:', error);
+      });
+    };
+  //nezinu vai šis strādā
+    if (itemValue == 'newest') {
+      console.log('newest sort');
+      this.db.transaction(function (txn) {
+        txn.executeSql('SELECT * FROM `note` ORDER BY `CreationTime`', [], function (tx, res) {
+          for (let i = 0; i < res.rows.length; ++i) {
+            console.log('note:', res.rows.item(i))
+          }
+        })
+      }, function (error) {
+        console.error('Error executing query:', error);
+      });
+    };
 
   };
 
