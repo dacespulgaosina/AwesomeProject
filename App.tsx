@@ -37,8 +37,11 @@ import RNFS from 'react-native-fs';
 
 import SQLite from 'react-native-sqlite-2';
 
+//import { NavigationContainer } from '@react-navigation/native';
+//import { createStackNavigator } from '@react-navigation/stack';
+import NoteListScreen from './NoteListScreen';
 
-
+//const Stack = createStackNavigator();
 
 // type SectionProps = PropsWithChildren<{
 //   title: string;
@@ -92,7 +95,7 @@ componentWillUnmount() {
    // var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note');
-
+    
     //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
     this.db.transaction(function (txn) {
       txn.executeSql('DROP TABLE IF EXISTS Users', [])
@@ -108,6 +111,7 @@ componentWillUnmount() {
           console.log('note:', res.rows.item(i))
         }
       })
+      //this.props.navigation.navigate('NoteList');
     });
 
   };
@@ -222,9 +226,9 @@ componentWillUnmount() {
       }, function (error) {
         console.error('Error executing query:', error);
       });
-    };
+    }
 
-    if (itemValue == 'dueDate') {
+    else if (itemValue == 'dueDate') {
       console.log('due sort');
      
       this.db.transaction(function (txn) {
@@ -236,9 +240,9 @@ componentWillUnmount() {
       }, function (error) {
         console.error('Error executing query:', error);
       });
-    };
+    }
   //nezinu vai šis strādā
-    if (itemValue == 'newest') {
+    else if (itemValue == 'newest') {
       console.log('newest sort');
       this.db.transaction(function (txn) {
         txn.executeSql('SELECT * FROM `note` ORDER BY `CreationTime`', [], function (tx, res) {
@@ -260,6 +264,13 @@ const handlerProps = {
 }
   return (
     <SafeAreaView style={this.state.backgroundStyle}>
+      {/*
+      <NavigationContainer>
+      <Stack.Navigator initialRouteName="MyComponent">
+        <Stack.Screen name="MyComponent" component={MyComponent} />
+        <Stack.Screen name="NoteList" component={NoteListScreen} />
+      </Stack.Navigator>
+  */}
       <View style={styles.container}>
         <View style={styles.searchContainer}>
 
@@ -281,8 +292,9 @@ const handlerProps = {
             onValueChange={this.handlePickerChange}
             style={styles.picker}
           >
-            <Picker.Item label="Newest First" value="newest" />
+             <Picker.Item label="Select an option" value="" />
             <Picker.Item label="Priority" value="priority" />
+            <Picker.Item label="Newest First" value="newest" />
             <Picker.Item label="Due Date" value="dueDate" />
             <Picker.Item label="Title" value="title" />
           </Picker>
@@ -321,6 +333,7 @@ const handlerProps = {
           />
           {/* <Button title="Save to File" onPress={writeDataToFile} /> */}
         </View>
+        
       </View>
     </SafeAreaView>
   );
