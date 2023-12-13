@@ -38,6 +38,7 @@ import RNFS from 'react-native-fs';
 import SQLite from 'react-native-sqlite-2';
 
 import AddNoteComponent from './AddNoteComponent';
+import NoteCard from './NoteCard';
 
 interface Istate {
   showAddNote: boolean,
@@ -61,6 +62,7 @@ class MyComponent extends React.Component {
     isDarkMode: false,
     selectedValue: '',
     inputValue: '',
+    notes: [],
     backgroundStyle: {
          backgroundColor: false ? Colors.darker : Colors.lighter,
       },
@@ -82,6 +84,10 @@ setSelectedValue = (value) => {
 }
 setInputValue = (value) => {
   this.setState({inputValue: value});
+}
+
+setNotes = (value) => {
+  this.setState({notes: value});
 }
   
 componentWillUnmount() {
@@ -120,7 +126,7 @@ componentWillUnmount() {
       })
       //this.props.navigation.navigate('NoteList');
     });
-
+    this.setState({showAddNote: !this.state.showAddNote});
   };
 
    dropTables = () => {
@@ -209,7 +215,34 @@ componentWillUnmount() {
     //   console.error('Error opening database:', error);
     // });
 
+    var orderBy = ''; 
+    if (itemValue == "priority") {
+      orderBy = ' ORDER BY `Priority`';
+    }
+    else if (itemValue == 'title') {
+      orderBy = ' ORDER BY `Title`';
+    }
+    else if (itemValue == 'dueDate') {
+      orderBy = ' ORDER BY `NotificationTime`';
+    }
+    else if (itemValue == 'newest') {
+      orderBy = ' ORDER BY `CreationTime`';
+    }
+
+    this.db.transaction((txn) => {
+      txn.executeSql('SELECT * FROM note' + orderBy, [], (tx, res) => {
+        const fetchedNotes = [];
+        for (let i = 0; i < res.rows.length; ++i) {
+          fetchedNotes.push(res.rows.item(i));
+        }
+        this.setNotes(fetchedNotes);
+      });
+    });
+
+
     // Update the state to reflect the selected value
+
+    this.state.selectedValue = itemValue;
     this.setSelectedValue(this.state.itemValue);
     if (itemValue == "priority") {
       console.log('priority sort');
@@ -295,20 +328,7 @@ const handlerProps = {
             style={styles.searchIcon}
           />
         </View>
-        <View style={styles.container}>
-          <Text style={styles.label}>Sort by:</Text>
-          <Picker
-            selectedValue={this.state.selectedValue}
-            onValueChange={this.handlePickerChange}
-            style={styles.picker}
-          >
-             <Picker.Item label="Select an option" value="" />
-            <Picker.Item label="Priority" value="priority" />
-            <Picker.Item label="Newest First" value="newest" />
-            <Picker.Item label="Due Date" value="dueDate" />
-            <Picker.Item label="Title" value="title" />
-          </Picker>
-        </View>
+        
         <View style={styles.container}>
           <View style={styles.inputRow}>
             <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
@@ -323,26 +343,27 @@ const handlerProps = {
           </View>
         </View>
         <View style={styles.container}>
-          <View style={styles.inputRow}>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote2}>
-              <Text style={styles.buttonText}>Add Note2</Text>
-            </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables2}>
-              <Text style={styles.buttonText}>Drop2</Text>
-            </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables2}>
-              <Text style={styles.buttonText}>Create DB2</Text>
-            </Pressable>
-          </View>
+        <View style={styles.container}>
+          <Text style={styles.label}>Sort by:</Text>
+          <Picker
+            selectedValue={this.state.selectedValue}
+            onValueChange={this.handlePickerChange}
+            style={styles.picker}
+          >
+             <Picker.Item label="Select" value="" />
+            <Picker.Item label="Priority" value="priority" />
+            <Picker.Item label="Newest First" value="newest" />
+            <Picker.Item label="Due Date" value="dueDate" />
+            <Picker.Item label="Title" value="title" />
+          </Picker>
         </View>
-        <View>
-          <TextInput
-            placeholder="Enter a value"
-            value={this.state.inputValue}
-            onChangeText={(text) => setInputValue(text)}
-          />
-          {/* <Button title="Save to File" onPress={writeDataToFile} /> */}
         </View>
+        <ScrollView>
+          <Text>My notes</Text>
+      {this.state.notes.map((note) => (
+        <NoteCard key={note.NoteID} note={note} />
+      ))}
+    </ScrollView>
       </View>
   ) : (<AddNoteComponent hideAddNote = {this.addNote2} db={this.db}/>)
 }
@@ -375,9 +396,9 @@ const styles = StyleSheet.create({
   },
   container: {
     //flex: 1,
-    padding: 20,
+    padding: 5,
     justifyContent: 'center',
-    paddingTop: Platform.OS === 'android' ? 50 : 50, // Adjust this value for Android
+    paddingTop: Platform.OS === 'android' ? 20 : 50, // Adjust this value for Android
   },
   searchContainer: {
     flexDirection: 'row',
