@@ -37,6 +37,12 @@ import RNFS from 'react-native-fs';
 
 import SQLite from 'react-native-sqlite-2';
 
+import AddNoteComponent from './AddNoteComponent';
+
+interface Istate {
+  showAddNote: boolean,
+}
+
 //import { NavigationContainer } from '@react-navigation/native';
 //import { createStackNavigator } from '@react-navigation/stack';
 import NoteListScreen from './NoteListScreen';
@@ -51,6 +57,7 @@ class MyComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+    showAddNote: false,
     isDarkMode: false,
     selectedValue: '',
     inputValue: '',
@@ -153,6 +160,7 @@ componentWillUnmount() {
     //  var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note2');
+    this.setState({showAddNote: !this.state.showAddNote});
   };
    createTables2 = () => {
 
@@ -271,6 +279,8 @@ const handlerProps = {
         <Stack.Screen name="NoteList" component={NoteListScreen} />
       </Stack.Navigator>
   */}
+
+  {!this.state.showAddNote ? (
       <View style={styles.container}>
         <View style={styles.searchContainer}>
 
@@ -333,8 +343,9 @@ const handlerProps = {
           />
           {/* <Button title="Save to File" onPress={writeDataToFile} /> */}
         </View>
-        
       </View>
+  ) : (<AddNoteComponent hideAddNote = {this.addNote2}/>)
+}
     </SafeAreaView>
   );
 }
