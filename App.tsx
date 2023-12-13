@@ -344,7 +344,7 @@ const handlerProps = {
           {/* <Button title="Save to File" onPress={writeDataToFile} /> */}
         </View>
       </View>
-  ) : (<AddNoteComponent hideAddNote = {this.addNote2}/>)
+  ) : (<AddNoteComponent hideAddNote = {this.addNote2} db={this.db}/>)
 }
     </SafeAreaView>
   );
