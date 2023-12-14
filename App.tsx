@@ -5,6 +5,10 @@
  * @format
  */
 
+//EKRĀNS NESKRULLĒJAS LĪDZ APAKŠAI
+
+
+
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
 import { Picker } from '@react-native-picker/picker';
@@ -175,34 +179,7 @@ componentWillUnmount() {
   };
    dropTables2 = () => {
     console.log('Drop tables2');
-    // const commands = [
-    //   [`CREATE TABLE IF NOT EXISTS note (
-    //     NoteID INTEGER PRIMARY KEY,
-    //     Priority INTEGER,
-    //     Text VARCHAR(300),
-    //     Image VARCHAR(50),
-    //     NotificationTime DATETIME,
-    //     Title VARCHAR(50)
-    // );`],
-    //   ['INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)', 
-    //   [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']],
-    //   ['INSERT INTO note (Priority, Text, Image, NotificationTime, Title) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title)',
-    //   [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']],
-    // ];
-
-    //const res = QuickSQLite.executeSqlBatch('myDatabase', commands);
-    // QuickSQLite.executeSqlBatch(
-    //   // Specify the database name as a string
-    //   'myDatabase',
-    //   commands,
-    //   // Success callback
-    //   (result) => {
-    //     console.log('Batch executed successfully:', result);
-    //   },
-    //   // Error callback
-    //   (error) => {
-    //     console.error('Error executing batch:', error);
-    //   }
+   
   };
    
 
