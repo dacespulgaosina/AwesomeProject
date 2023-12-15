@@ -1,6 +1,8 @@
 import {React, useState} from 'react';
 import {Text, StyleSheet, SafeAreaView, Pressable, View, TextInput} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 
 interface AddNoteProps {
@@ -12,6 +14,11 @@ const AddNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [priority, setPriority] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(null);
+
  
 
 // const addNote2 = () => {
@@ -23,32 +30,46 @@ const AddNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
 //     hideAddNote();
 // };
 
-const saveNote = () => {
-  console.log('add note2');
+// const saveNote = () => {
+//   console.log('add note2');
   
-  db.transaction(function (txn) {
-    txn.executeSql(
-      'INSERT INTO `note` (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)',
-      [priority, text, title],
-      (_, result) => {
-        // Success callback
-        console.log('Query executed successfully');
-        // Check result.rowsAffected to see the number of affected rows
-        const rowsAffected = result.rowsAffected;
-        if (rowsAffected > 0) {
-          console.log('Insert successful. Rows affected:', rowsAffected);
-        } else {
-          console.log('Insert failed. No rows affected.');
-        }
-      },
-      (_, error) => {
-        // Error callback
-        console.error('Error executing query', error);
-      }
-    );
-  });
+//   db.transaction(function (txn) {
+//     txn.executeSql(
+//       'INSERT INTO `note` (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)',
+//       [priority, text, title],
+//       (_, result) => {
+//         // Success callback
+//         console.log('Query executed successfully');
+//         // Check result.rowsAffected to see the number of affected rows
+//         const rowsAffected = result.rowsAffected;
+//         if (rowsAffected > 0) {
+//           console.log('Insert successful. Rows affected:', rowsAffected);
+//         } else {
+//           console.log('Insert failed. No rows affected.');
+//         }
+//       },
+//       (_, error) => {
+//         // Error callback
+//         console.error('Error executing query', error);
+//       }
+//     );
+//   });
 
-  hideAddNote();
+//   hideAddNote();
+// };
+
+
+
+
+const saveNote = () => {
+  const combinedDateTime = `${date.toISOString().slice(0, 10)} ${selectedTime}`;
+
+    console.log('add note2');
+    db.transaction(function (txn) {
+      txn.executeSql('INSERT INTO `note` (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, :NotificationTime, :Title, CURRENT_TIMESTAMP)', [priority, text, combinedDateTime, title]);
+    });
+
+    hideAddNote();
 };
 
 
@@ -59,6 +80,30 @@ const cancel = () => {
 }
 
 
+const showDatepicker = () => {
+  setShowPicker(true);
+};
+
+const onChange = (event, selectedDate) => {
+  const currentDate = selectedDate || date;
+  setShowPicker(Platform.OS === 'ios');
+  setDate(currentDate);
+  console.log(currentDate);
+};
+
+
+const showTimePicker = () => {
+  setTimePickerVisible(true);
+};
+
+const hideTimePicker = () => {
+  setTimePickerVisible(false);
+};
+
+const handleTimeConfirm = (time) => {
+  setSelectedTime(time);
+  hideTimePicker();
+};
 
 
   return <>
@@ -97,7 +142,36 @@ const cancel = () => {
       </View>
 
       
+      <View style={styles.inputRow}>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showDatepicker}>
+        <Text style={styles.buttonText}>Set due date:</Text>
+      </Pressable>
+     {/* <Text>{formatDateToYYYYMMDD(date)}</Text>*/}
+      {showPicker && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode="datetime" // You can also use "date" or "time" mode
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+      )}
+        </View>
 
+        <View>
+        <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showTimePicker}>
+        <Text style={styles.buttonText}>Set time:</Text>
+      </Pressable>
+      {selectedTime && <Text>Selected Time: {selectedTime.toLocaleTimeString()}</Text>}
+
+      <DateTimePickerModal
+        isVisible={isTimePickerVisible}
+        mode="time"
+        onConfirm={handleTimeConfirm}
+        onCancel={hideTimePicker}
+      />
+    </View>
 
     <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={saveNote}>
