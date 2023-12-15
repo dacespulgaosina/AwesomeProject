@@ -62,8 +62,18 @@ const AddNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
 
 
 const saveNote = () => {
-  const combinedDateTime = `${date.toISOString().slice(0, 10)} ${selectedTime}`;
+  const hours = selectedTime.getHours();
+  const minutes = selectedTime.getMinutes();
 
+  // Format hours and minutes if needed
+  const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+
+  const formattedTime = `${formattedHours}:${formattedMinutes}`;
+
+  const combinedDateTime = `**${date.toISOString().slice(0, 10)}** *${formattedTime}*`;
+  console.log('type of selected time: ' + (typeof selectedTime));
+console.log('combinedDateTime =' + combinedDateTime);
     console.log('add note2');
     db.transaction(function (txn) {
       txn.executeSql('INSERT INTO `note` (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, :NotificationTime, :Title, CURRENT_TIMESTAMP)', [priority, text, combinedDateTime, title]);
@@ -102,6 +112,7 @@ const hideTimePicker = () => {
 
 const handleTimeConfirm = (time) => {
   setSelectedTime(time);
+  console.log("The type of time is "+ (typeof time));
   hideTimePicker();
 };
 
