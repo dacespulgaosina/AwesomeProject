@@ -14,14 +14,44 @@ const AddNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
   const [priority, setPriority] = useState('');
  
 
-const addNote2 = () => {
-    console.log('add note2');
-    db.transaction(function (txn) {
-      txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, :selectedDate, :Title, CURRENT_TIMESTAMP)', [priority, text, selectedDate, title]);
-    });
+// const addNote2 = () => {
+//     console.log('add note2');
+//     db.transaction(function (txn) {
+//       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, :selectedDate, :Title, CURRENT_TIMESTAMP)', [priority, text, selectedDate, title]);
+//     });
 
-    hideAddNote();
+//     hideAddNote();
+// };
+
+const saveNote = () => {
+  console.log('add note2');
+  
+  db.transaction(function (txn) {
+    txn.executeSql(
+      'INSERT INTO `note` (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)',
+      [priority, text, title],
+      (_, result) => {
+        // Success callback
+        console.log('Query executed successfully');
+        // Check result.rowsAffected to see the number of affected rows
+        const rowsAffected = result.rowsAffected;
+        if (rowsAffected > 0) {
+          console.log('Insert successful. Rows affected:', rowsAffected);
+        } else {
+          console.log('Insert failed. No rows affected.');
+        }
+      },
+      (_, error) => {
+        // Error callback
+        console.error('Error executing query', error);
+      }
+    );
+  });
+
+  hideAddNote();
 };
+
+
 
 const cancel = () => {
   console.log('cancel');
@@ -70,8 +100,8 @@ const cancel = () => {
 
 
     <View style={styles.inputRow}>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={addNote2}>
-        <Text style={styles.buttonText}>Add Note</Text>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={saveNote}>
+        <Text style={styles.buttonText}>Save</Text>
       </Pressable>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
         <Text style={styles.buttonText}>Cancel</Text>
