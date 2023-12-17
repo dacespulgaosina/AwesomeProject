@@ -45,7 +45,7 @@ import AddNoteComponent from './AddNoteComponent';
 import NoteCard from './NoteCard';
 
 interface Istate {
-  showAddNote: boolean,
+  showAddNote: number,
 }
 
 //import { NavigationContainer } from '@react-navigation/native';
@@ -62,7 +62,7 @@ class MyComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-    showAddNote: false,
+    showAddNote: 0,
     isDarkMode: false,
     selectedValue: '',
     inputValue: '',
@@ -130,7 +130,7 @@ componentWillUnmount() {
       })
       //this.props.navigation.navigate('NoteList');
     });
-    this.setState({showAddNote: !this.state.showAddNote});
+    this.setState({showAddNote: 1});
   };
 
    dropTables = () => {
@@ -170,7 +170,7 @@ componentWillUnmount() {
     //  var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note2');
-    this.setState({showAddNote: !this.state.showAddNote});
+    this.setState({showAddNote: 0});
   };
    createTables2 = () => {
 
@@ -290,7 +290,7 @@ const handlerProps = {
       </Stack.Navigator>
   */}
 
-  {!this.state.showAddNote ? (
+  {(this.state.showAddNote == 0) ? (
       <View style={styles.container}>
         <View style={styles.searchContainer}>
 
@@ -316,6 +316,14 @@ const handlerProps = {
             </Pressable>
             <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
               <Text style={styles.buttonText}>Create DB</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.container}>
+          <View style={styles.inputRow}>
+            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addNote}>
+              <Text style={styles.buttonText}>Add Dynacmic Note</Text>
             </Pressable>
           </View>
         </View>
