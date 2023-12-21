@@ -42,6 +42,7 @@ import RNFS from 'react-native-fs';
 import SQLite from 'react-native-sqlite-2';
 
 import AddNoteComponent from './AddNoteComponent';
+import AddDynamicNoteComponent from './AddDynamicNoteComponent';
 import NoteCard from './NoteCard';
 
 interface Istate {
@@ -62,15 +63,15 @@ class MyComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-    showAddNote: 0,
-    isDarkMode: false,
-    selectedValue: '',
-    inputValue: '',
-    notes: [],
-    backgroundStyle: {
-         backgroundColor: false ? Colors.darker : Colors.lighter,
+      showAddNote: 0,
+      isDarkMode: false,
+      selectedValue: '',
+      inputValue: '',
+      notes: [],
+      backgroundStyle: {
+        backgroundColor: false ? Colors.darker : Colors.lighter,
       },
-    
+
     };
 
     var SQLite = require('react-native-sqlite-storage');
@@ -80,24 +81,49 @@ class MyComponent extends React.Component {
       this.dbOpenSuccess,
       this.dbOpenError
     );
-  
-   
-}
-setSelectedValue = (value) => {
-  this.setState({selectedValue: value});
-}
-setInputValue = (value) => {
-  this.setState({inputValue: value});
-}
 
-setNotes = (value) => {
-  this.setState({notes: value});
-}
+  }
+
+
+    handleSearchTermChange = (text) => {
+      this.setInputValue(text);
+    };
   
-componentWillUnmount() {
-  // Close the database connection when the component is about to unmount
-  // this.db.close();
-}
+    handleSearch = () => {
+      const searchTerm = this.state.inputValue.trim();
+      if (searchTerm) {
+        this.db.transaction((txn) => {
+          const query = 'SELECT * FROM note WHERE Title LIKE ?';
+          const params = [`%${searchTerm}%`];
+  
+          txn.executeSql(query, params, (tx, res) => {
+            const fetchedNotes = [];
+            for (let i = 0; i < res.rows.length; ++i) {
+              fetchedNotes.push(res.rows.item(i));
+            }
+            this.setNotes(fetchedNotes);
+          });
+        });
+      }
+    };
+
+
+
+  setSelectedValue = (value) => {
+    this.setState({ selectedValue: value });
+  }
+  setInputValue = (value) => {
+    this.setState({ inputValue: value });
+  }
+
+  setNotes = (value) => {
+    this.setState({ notes: value });
+  }
+
+  componentWillUnmount() {
+    // Close the database connection when the component is about to unmount
+    // this.db.close();
+  }
   dbOpenSuccess = () => {
     console.log('Database opened successfully');
     // Perform any additional setup or actions after the database is opened
@@ -108,11 +134,11 @@ componentWillUnmount() {
     console.error('Error opening database:', error);
   };
 
-   addNote = () => {
-   // var SQLite = require('react-native-sqlite-storage');
+  addNote = () => {
+    // var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note');
-    
+
     //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
     this.db.transaction(function (txn) {
       txn.executeSql('DROP TABLE IF EXISTS Users', [])
@@ -122,7 +148,7 @@ componentWillUnmount() {
       )
       txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['nora'])
       txn.executeSql('INSERT INTO Users (name) VALUES (:name)', ['takuya'])
-     
+
       txn.executeSql('SELECT * FROM `note`', [], function (tx, res) {
         for (let i = 0; i < res.rows.length; ++i) {
           console.log('note:', res.rows.item(i))
@@ -130,10 +156,15 @@ componentWillUnmount() {
       })
       //this.props.navigation.navigate('NoteList');
     });
-    this.setState({showAddNote: 1});
+    this.setState({ showAddNote: 1 });
   };
 
-   dropTables = () => {
+  addDynamicNote = () => {
+    console.log('add dynamic note');
+    this.setState({ showAddNote: 2 });
+  }
+
+  dropTables = () => {
     //var SQLite = require('react-native-sqlite-storage');
 
     console.log('Drop tables');
@@ -144,7 +175,7 @@ componentWillUnmount() {
     });
   };
 
-   createTables = () => {
+  createTables = () => {
     //var SQLite = require('react-native-sqlite-storage');
 
     console.log('Create tables');
@@ -166,24 +197,24 @@ componentWillUnmount() {
     });
   };
 
-   addNote2 = () => {
+  addNote2 = () => {
     //  var SQLite = require('react-native-sqlite-storage');
 
     console.log('Add Note2');
-    this.setState({showAddNote: 0});
+    this.setState({ showAddNote: 0 });
   };
-   createTables2 = () => {
+  createTables2 = () => {
 
 
     console.log('Create Table2');
   };
-   dropTables2 = () => {
+  dropTables2 = () => {
     console.log('Drop tables2');
-   
-  };
-   
 
-   handlePickerChange = (itemValue: string) => {
+  };
+
+
+  handlePickerChange = (itemValue: string) => {
     // Do something with the selected value
     console.log('Selected Value:', itemValue);
     //const db = SQLite.openDatabase('test.db', '1.0', '', 1, (db) => {
@@ -192,7 +223,7 @@ componentWillUnmount() {
     //   console.error('Error opening database:', error);
     // });
 
-    var orderBy = ''; 
+    var orderBy = '';
     if (itemValue == "priority") {
       orderBy = ' ORDER BY `Priority`';
     }
@@ -234,7 +265,7 @@ componentWillUnmount() {
     }
     else if (itemValue == 'title') {
       console.log('title sort');
-      
+
       this.db.transaction(function (txn) {
         txn.executeSql('SELECT * FROM `note` ORDER BY `Title`', [], function (tx, res) {
           for (let i = 0; i < res.rows.length; ++i) {
@@ -248,7 +279,7 @@ componentWillUnmount() {
 
     else if (itemValue == 'dueDate') {
       console.log('due sort');
-     
+
       this.db.transaction(function (txn) {
         txn.executeSql('SELECT * FROM `note` ORDER BY `NotificationTime`', [], function (tx, res) {
           for (let i = 0; i < res.rows.length; ++i) {
@@ -259,7 +290,7 @@ componentWillUnmount() {
         console.error('Error executing query:', error);
       });
     }
-  //nezinu vai šis strādā
+    //nezinu vai šis strādā
     else if (itemValue == 'newest') {
       console.log('newest sort');
       this.db.transaction(function (txn) {
@@ -275,14 +306,16 @@ componentWillUnmount() {
 
   };
 
-render() {
-const handlerProps = {
-  ...this.state,
-  handlePickerChange: this.handlePickerChange,
-}
-  return (
-    <SafeAreaView style={this.state.backgroundStyle}>
-      {/*
+  render() {
+    const handlerProps = {
+      ...this.state,
+      handlePickerChange: this.handlePickerChange,
+      handleSearchTermChange: this.handleSearchTermChange,
+      handleSearch: this.handleSearch,
+    }
+    return (
+      <SafeAreaView style={this.state.backgroundStyle}>
+        {/*
       <NavigationContainer>
       <Stack.Navigator initialRouteName="MyComponent">
         <Stack.Screen name="MyComponent" component={MyComponent} />
@@ -290,71 +323,91 @@ const handlerProps = {
       </Stack.Navigator>
   */}
 
-  {(this.state.showAddNote == 0) ? (
-      <View style={styles.container}>
-        <View style={styles.searchContainer}>
+        {(this.state.showAddNote == 0) ? (
+          <View style={styles.container}>
+            <View style={styles.searchContainer}>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Search..."
-            placeholderTextColor="#A0A0A0"
-            underlineColorAndroid="transparent"
-          />
-          <Image
-            source={require('./search-icon.png')} // Replace with the actual path to your search icon
-            style={styles.searchIcon}
-          />
-        </View>
-        
-        <View style={styles.container}>
-          <View style={styles.inputRow}>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
-              <Text style={styles.buttonText}>Add Note</Text>
-            </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
-              <Text style={styles.buttonText}>Drop</Text>
-            </Pressable>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
-              <Text style={styles.buttonText}>Create DB</Text>
-            </Pressable>
-          </View>
-        </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Search..."
+                placeholderTextColor="#A0A0A0"
+                underlineColorAndroid="transparent"
+                onChangeText={this.handleSearchTermChange}
+              />
+              <TouchableOpacity onPress={this.handleSearch}>
+            <Image
+              source={require('./search-icon.png')}
+              style={styles.searchIcon}
+            />
+          </TouchableOpacity>
+            </View>
 
-        <View style={styles.container}>
-          <View style={styles.inputRow}>
-            <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addNote}>
-              <Text style={styles.buttonText}>Add Dynacmic Note</Text>
-            </Pressable>
+
+
+            <View style={styles.container}>
+              <View style={styles.inputRow}>
+                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
+                  <Text style={styles.buttonText}>Add Note</Text>
+                </Pressable>
+                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
+                  <Text style={styles.buttonText}>Drop</Text>
+                </Pressable>
+                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
+                  <Text style={styles.buttonText}>Create DB</Text>
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.container}>
+              <View style={styles.inputRow}>
+                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addDynamicNote}>
+                  <Text style={styles.buttonText}>Add Dynacmic Note</Text>
+                </Pressable>
+              </View>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.container}>
+                <Text style={styles.label}>Sort by:</Text>
+                <Picker
+                  selectedValue={this.state.selectedValue}
+                  onValueChange={this.handlePickerChange}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Select" value="" />
+                  <Picker.Item label="Priority" value="priority" />
+                  <Picker.Item label="Newest First" value="newest" />
+                  <Picker.Item label="Due Date" value="dueDate" />
+                  <Picker.Item label="Title" value="title" />
+                </Picker>
+              </View>
+            </View>
+            <ScrollView>
+              <Text>My notes</Text>
+              {this.state.notes.map((note) => (
+                <NoteCard key={note.NoteID} note={note} />
+              ))}
+            </ScrollView>
           </View>
-        </View>
-        <View style={styles.container}>
-        <View style={styles.container}>
-          <Text style={styles.label}>Sort by:</Text>
-          <Picker
-            selectedValue={this.state.selectedValue}
-            onValueChange={this.handlePickerChange}
-            style={styles.picker}
-          >
-             <Picker.Item label="Select" value="" />
-            <Picker.Item label="Priority" value="priority" />
-            <Picker.Item label="Newest First" value="newest" />
-            <Picker.Item label="Due Date" value="dueDate" />
-            <Picker.Item label="Title" value="title" />
-          </Picker>
-        </View>
-        </View>
-        <ScrollView>
-          <Text>My notes</Text>
-      {this.state.notes.map((note) => (
-        <NoteCard key={note.NoteID} note={note} />
-      ))}
-    </ScrollView>
-      </View>
-  ) : (<AddNoteComponent hideAddNote = {this.addNote2} db={this.db}/>)
+
+        )     
+
+          : (
+            <>
+              {this.state.showAddNote == 1 ? (
+                <AddNoteComponent hideAddNote={this.addNote2} db={this.db} />
+              ) : (
+                <AddDynamicNoteComponent hideAddNote={this.addNote2} db={this.db} />
+              )}
+            </>
+          )
+
+          
+          
+          
 }
-    </SafeAreaView>
-  );
-}
+      </SafeAreaView>
+    );
+  }
 }
 const styles = StyleSheet.create({
   button: {

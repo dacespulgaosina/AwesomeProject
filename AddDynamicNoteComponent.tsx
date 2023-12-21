@@ -9,7 +9,7 @@ interface AddNoteProps {
   hideAddNote: () => void;
 }
 
-const AddNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
+const AddDynamicNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
 
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
@@ -71,7 +71,7 @@ const saveNote = () => {
 
   const formattedTime = `${formattedHours}:${formattedMinutes}`;
 
-  const combinedDateTime = `${date.toISOString().slice(0, 10)} ${formattedTime}`;
+  const combinedDateTime = `**${date.toISOString().slice(0, 10)}** *${formattedTime}*`;
   console.log('type of selected time: ' + (typeof selectedTime));
 console.log('combinedDateTime =' + combinedDateTime);
     console.log('add note2');
@@ -118,7 +118,7 @@ const handleTimeConfirm = (time) => {
 
 
   return <>
-    <Text>Hello World</Text>
+    <Text>Dynamic Note</Text>
 
     <View style={styles.inputRow}>
       <Text>Title</Text><TextInput
@@ -268,4 +268,4 @@ const styles = StyleSheet.create({
   });
 
 
-export default AddNoteComponent;
+export default AddDynamicNoteComponent;
