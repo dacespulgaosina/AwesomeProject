@@ -18,6 +18,7 @@ const AddDynamicNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
   const [showPicker, setShowPicker] = useState(false);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [inputParameter, setInputParameter] = useState('');
 
  
 
@@ -76,7 +77,7 @@ const saveNote = () => {
 console.log('combinedDateTime =' + combinedDateTime);
     console.log('add note2');
     db.transaction(function (txn) {
-      txn.executeSql('INSERT INTO `note` (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, null, :NotificationTime, :Title, CURRENT_TIMESTAMP)', [priority, text, combinedDateTime, title]);
+      txn.executeSql('INSERT INTO `DynamicNote` (Text, NotificationTime, Title, CreationTime, InputParameter) VALUES (:Text, :NotificationTime, :Title, CURRENT_TIMESTAMP, :InputParameter)', [text, combinedDateTime, title, inputParameter]);
     });
 
     hideAddNote();
@@ -138,20 +139,6 @@ const handleTimeConfirm = (time) => {
 
     </View>
 
-    <View style={styles.inputRow}>
-        <Text>Priority</Text>
-        <Picker
-          selectedValue={priority}
-          onValueChange={setPriority}
-          style={styles.picker}
-        >
-          <Picker.Item label="1" value={1} />
-          <Picker.Item label="2" value={2} />
-          <Picker.Item label="3" value={3} />
-          <Picker.Item label="no priority" value={4} />
-        </Picker>
-      </View>
-
       
       <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showDatepicker}>
@@ -183,6 +170,20 @@ const handleTimeConfirm = (time) => {
         onCancel={hideTimePicker}
       />
     </View>
+
+
+
+    <View style={styles.inputRow}>
+  <Text>Input Parameter</Text>
+  <TextInput
+    style={styles.input}
+    placeholder="Enter input parameter"
+    value={inputParameter}
+    onChangeText={setInputParameter}
+  />
+</View>
+
+
 
     <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={saveNote}>

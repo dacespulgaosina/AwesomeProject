@@ -189,9 +189,19 @@ class MyComponent extends React.Component {
     CreationTime DATETIME
 );`;
 
+const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
+  DynamicNoteID INTEGER PRIMARY KEY,
+  Text VARCHAR(300),
+  NotificationTime DATETIME,
+  Title VARCHAR(50),
+  CreationTime DATETIME,
+  InputParameter int
+);`;
+
     //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
     this.db.transaction(function (txn) {
       txn.executeSql(query, []);
+      txn.executeSql(query2, []);
       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']);
       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']);
     });
