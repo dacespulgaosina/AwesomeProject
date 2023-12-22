@@ -418,7 +418,7 @@ const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
                 {this.state.showAddNote == 2 ? (
                 <AddDynamicNoteComponent hideAddNote={this.addNote2} db={this.db} />
                 ) : (
-                  <ViewDynamicNotesComponent />
+                  <ViewDynamicNotesComponent hideAddNote={this.addNote2} db={this.db}/>
                 )}
             </>
           )}
