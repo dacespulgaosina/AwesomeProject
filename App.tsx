@@ -44,6 +44,8 @@ import SQLite from 'react-native-sqlite-2';
 import AddNoteComponent from './AddNoteComponent';
 import AddDynamicNoteComponent from './AddDynamicNoteComponent';
 import NoteCard from './NoteCard';
+import ViewDynamicNoteComponent from './ViewDynamicNoteComponent';
+
 
 interface Istate {
   showAddNote: number,
@@ -52,6 +54,7 @@ interface Istate {
 //import { NavigationContainer } from '@react-navigation/native';
 //import { createStackNavigator } from '@react-navigation/stack';
 import NoteListScreen from './NoteListScreen';
+import ViewDynamicNotesComponent from './ViewDynamicNotesComponent';
 
 //const Stack = createStackNavigator();
 
@@ -163,6 +166,10 @@ class MyComponent extends React.Component {
     console.log('add dynamic note');
     this.setState({ showAddNote: 2 });
   }
+
+  viewDynamicNotes = () => {
+    this.setState({ showAddNote: 3 });
+  };
 
   dropTables = () => {
     //var SQLite = require('react-native-sqlite-storage');
@@ -373,6 +380,9 @@ const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
                 <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addDynamicNote}>
                   <Text style={styles.buttonText}>Add Dynacmic Note</Text>
                 </Pressable>
+                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.viewDynamicNotes}>
+                <Text style={styles.buttonText}>View Dynamic Notes</Text>
+              </Pressable>
               </View>
             </View>
             <View style={styles.container}>
@@ -399,22 +409,21 @@ const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
             </ScrollView>
           </View>
 
-        )     
-
-          : (
+        ) : (
             <>
               {this.state.showAddNote == 1 ? (
                 <AddNoteComponent hideAddNote={this.addNote2} db={this.db} />
               ) : (
+                <>
+                {this.state.showAddNote == 2 ? (
                 <AddDynamicNoteComponent hideAddNote={this.addNote2} db={this.db} />
-              )}
+                ) : (
+                  <ViewDynamicNotesComponent />
+                )}
             </>
-          )
-
-          
-          
-          
-}
+          )}
+        </>
+        )}
       </SafeAreaView>
     );
   }
