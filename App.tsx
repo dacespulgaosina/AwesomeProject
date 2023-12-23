@@ -87,6 +87,72 @@ class MyComponent extends React.Component {
 
   }
 
+  componentDidMount() {
+    // Code to run when the component is first mounted
+    console.log('Component mounted!');
+
+
+    const fetchDynamicNoteIDs = (): Promise<number[]> => {
+      return new Promise((resolve, reject) => {
+        const DynamicNoteIDs: number[] = [];
+        this.db.transaction((txn) => {
+          txn.executeSql('SELECT * FROM `DynamicNote`', [], (tx, res) => {
+            for (let i = 0; i < res.rows.length; ++i) {
+              const dynamicNoteID = res.rows.item(i).DynamicNoteID;
+              DynamicNoteIDs.push(dynamicNoteID);
+            }
+            resolve(DynamicNoteIDs);
+          });
+        }, (error) => {
+          reject(error);
+        });
+      });
+    };
+
+    fetchDynamicNoteIDs()
+    .then((DynamicNoteIDs) => {
+      console.log('DynamicNoteIDs:', DynamicNoteIDs);
+      // Do something with DynamicNoteIDs
+    })
+    .catch((error) => {
+      console.error('Error fetching DynamicNoteIDs:', error);
+    });
+
+
+    
+    // let DynamicNoteIDs: number[] = [];
+    // //Atlasīt visas dynamic note
+    // this.db.transaction(function (txn) {
+    //   txn.executeSql('SELECT * FROM `DynamicNote`', [], function (tx, res) {
+    //     console.log('found rows: ', res.rows.length);
+    //     for (let i = 0; i < res.rows.length; ++i) {
+    //       //console.log('note:', res.rows.item(i))
+    //       //DynamicNoteIDs.push(res.rows.item(i).DynamicNoteID);
+    //       const row = res.rows.item(i);
+    //       console.log('Row:', row);
+
+    //       // Attempt to get DynamicNoteID
+    //       const dynamicNoteID = row.DynamicNoteID;
+    //       console.log('DYnamic Note ID:', dynamicNoteID)
+    //       DynamicNoteIDs.push(dynamicNoteID);
+    //     }
+    //   })
+    //   //this.props.navigation.navigate('NoteList');
+    // }, function (error) {
+    //   console.error('Error executing Dynamic Note Select:', error);
+    // });
+    // console.log('DynamicNoteIDs:', DynamicNoteIDs);
+
+
+
+
+//Atlasīt katrai dynamic note atbilstošo dynamic note value, kas atbilst šīs dienas datumam
+//Ja tāda neeksistē(lietotājs aplikāciju atver pirmo reizi diennaktī), tad dynamic note value ierakstu iespraužam datubāzes dynamicNoteValue datubāzes tabulā
+//Ar skaitlisko vērtību nedefinētu null(visi tekošās dienas ieraksti, vēlāk rādīsies atbildot uz pogu 'View alerts')
+    
+  }
+
+ 
 
     handleSearchTermChange = (text) => {
       this.setInputValue(text);
@@ -201,14 +267,20 @@ const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
   Text VARCHAR(300),
   NotificationTime DATETIME,
   Title VARCHAR(50),
-  CreationTime DATETIME,
-  InputParameter int
+  CreationTime DATETIME
+);`;
+
+const query3 = `CREATE TABLE IF NOT EXISTS DynamicNoteValue (
+  DynamicNoteID INTEGER,
+  InputParameter DECIMAL,
+  FOREIGN KEY (DynamicNoteID) REFERENCES DynamicNote(DynamicNoteID)
 );`;
 
     //const db = SQLite.openDatabase('test.db', '1.0', '', 1)
     this.db.transaction(function (txn) {
       txn.executeSql(query, []);
       txn.executeSql(query2, []);
+      txn.executeSql(query3, []);
       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)', [1, 'Sample Text 1', 'image1.jpg', 'Sample Title Z']);
       txn.executeSql('INSERT INTO note (Priority, Text, Image, NotificationTime, Title, CreationTime) VALUES (:Priority, :Text, :Image, CURRENT_TIMESTAMP, :Title, CURRENT_TIMESTAMP)', [2, 'Sample Text 2', 'image2.jpg', 'Sample Title A']);
     });
@@ -381,7 +453,7 @@ const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
                   <Text style={styles.buttonText}>Add Dynacmic Note</Text>
                 </Pressable>
                 <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.viewDynamicNotes}>
-                <Text style={styles.buttonText}>View Dynamic Notes</Text>
+                <Text style={styles.buttonText}>View Alerts</Text>
               </Pressable>
               </View>
             </View>

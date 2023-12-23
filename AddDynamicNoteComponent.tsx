@@ -77,7 +77,9 @@ const saveNote = () => {
 console.log('combinedDateTime =' + combinedDateTime);
     console.log('add note2');
     db.transaction(function (txn) {
-      txn.executeSql('INSERT INTO `DynamicNote` (Text, NotificationTime, Title, CreationTime, InputParameter) VALUES (:Text, :NotificationTime, :Title, CURRENT_TIMESTAMP, :InputParameter)', [text, combinedDateTime, title, inputParameter]);
+      txn.executeSql('INSERT INTO `DynamicNote` (Text, NotificationTime, Title, CreationTime) VALUES (:Text, :NotificationTime, :Title, CURRENT_TIMESTAMP)', [text, combinedDateTime, title]);
+    }, function (error) {
+      console.error('Error executing Dynamic Note Insert:', error);
     });
 
     hideAddNote();
@@ -173,7 +175,7 @@ const handleTimeConfirm = (time) => {
 
 
 
-    <View style={styles.inputRow}>
+    {/* <View style={styles.inputRow}>
   <Text>Input Parameter</Text>
   <TextInput
     style={styles.input}
@@ -181,7 +183,7 @@ const handleTimeConfirm = (time) => {
     value={inputParameter}
     onChangeText={setInputParameter}
   />
-</View>
+</View> */}
 
 
 
