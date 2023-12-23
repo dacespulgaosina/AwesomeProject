@@ -119,34 +119,61 @@ class MyComponent extends React.Component {
     });
 
 
-    
-    // let DynamicNoteIDs: number[] = [];
-    // //Atlasīt visas dynamic note
-    // this.db.transaction(function (txn) {
-    //   txn.executeSql('SELECT * FROM `DynamicNote`', [], function (tx, res) {
-    //     console.log('found rows: ', res.rows.length);
-    //     for (let i = 0; i < res.rows.length; ++i) {
-    //       //console.log('note:', res.rows.item(i))
-    //       //DynamicNoteIDs.push(res.rows.item(i).DynamicNoteID);
-    //       const row = res.rows.item(i);
-    //       console.log('Row:', row);
-
-    //       // Attempt to get DynamicNoteID
-    //       const dynamicNoteID = row.DynamicNoteID;
-    //       console.log('DYnamic Note ID:', dynamicNoteID)
-    //       DynamicNoteIDs.push(dynamicNoteID);
-    //     }
-    //   })
-    //   //this.props.navigation.navigate('NoteList');
-    // }, function (error) {
-    //   console.error('Error executing Dynamic Note Select:', error);
-    // });
-    // console.log('DynamicNoteIDs:', DynamicNoteIDs);
-
-
-
 
 //Atlasīt katrai dynamic note atbilstošo dynamic note value, kas atbilst šīs dienas datumam
+const fetchDynamicNoteValues = (MyID: number, today: Date): Promise<any[]> => {
+  return new Promise((resolve, reject) => {
+    console.log('A1');
+    const formattedDate = today.toISOString().split('T')[0]; // Format date as 'YYYY-MM-DD'
+    const query = 'SELECT * FROM `DynamicNoteValue` WHERE DynamicNoteID = ? AND MyDate >= ? AND MyDate < ?';
+  
+    const params = [MyID, formattedDate, new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]];
+    
+    console.log('Full Query:', query.replace(/\?/g, (match) => JSON.stringify(params.shift())));
+
+
+    const DynamicNoteValues: any[] = [];
+    this.db.transaction((txn) => {
+      console.log('AA2');
+      const MyTimestamp = new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      console.log('MyTimeStamp: ', MyTimestamp);
+      txn.executeSql(query, [MyID, formattedDate, new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]], (tx, res) => {
+        for (let i = 0; i < res.rows.length; ++i) {
+          console.log('AA3');
+          const dynamicNoteValue = res.rows.item(i);
+          DynamicNoteValues.push(dynamicNoteValue);
+        }
+        resolve(DynamicNoteValues);
+      });
+    }, (error) => {
+      reject(error);
+    });
+  });
+};
+
+const MyID = 1; // Replace with the actual DynamicNoteID
+  const today = new Date(); // Current date and time
+
+  // Call the function and handle the result
+  fetchDynamicNoteValues(MyID, today)
+    .then((DynamicNoteValues) => {
+      console.log('XXXXDynamicNoteValues:', DynamicNoteValues);
+      
+      // Do something with DynamicNoteValues
+      if (DynamicNoteValues.length === 0){
+        console.log('Inserting new DynamicNoteValue');
+        this.db.transaction(function (txn) {
+          txn.executeSql('INSERT INTO DynamicNoteValue (DynamicNoteID, InputParameter, MyDate) VALUES (:DynamicNoteId, null, CURRENT_TIMESTAMP)', [MyID]);
+          
+        });
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching DynamicNoteValues:', error);
+    });
+
+    
+
 //Ja tāda neeksistē(lietotājs aplikāciju atver pirmo reizi diennaktī), tad dynamic note value ierakstu iespraužam datubāzes dynamicNoteValue datubāzes tabulā
 //Ar skaitlisko vērtību nedefinētu null(visi tekošās dienas ieraksti, vēlāk rādīsies atbildot uz pogu 'View alerts')
     
@@ -245,6 +272,8 @@ class MyComponent extends React.Component {
     this.db.transaction(function (txn) {
       txn.executeSql('DROP TABLE IF EXISTS Users', []);
       txn.executeSql('DROP TABLE IF EXISTS Note', []);
+      txn.executeSql('DROP TABLE IF EXISTS DynamicNote', []);
+      txn.executeSql('DROP TABLE IF EXISTS DynamicNoteValue', []);
     });
   };
 
@@ -273,6 +302,7 @@ const query2 = `CREATE TABLE IF NOT EXISTS DynamicNote (
 const query3 = `CREATE TABLE IF NOT EXISTS DynamicNoteValue (
   DynamicNoteID INTEGER,
   InputParameter DECIMAL,
+  MyDate DATETIME,
   FOREIGN KEY (DynamicNoteID) REFERENCES DynamicNote(DynamicNoteID)
 );`;
 
