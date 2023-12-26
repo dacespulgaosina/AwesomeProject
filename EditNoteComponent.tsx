@@ -13,7 +13,7 @@ interface EditNoteProps {
 const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEdit }) => {
   const [text, setText] = useState(noteToEdit.Text);
   const [title, setTitle] = useState(noteToEdit.Title);
-  const [priority, setPriority] = useState(noteToEdit.Priority.toString());
+  const [selectedPriority, setSelectedPriority] = useState(noteToEdit.Priority.toString());
   const [date, setDate] = useState(new Date(noteToEdit.NotificationTime));
   const [showPicker, setShowPicker] = useState(false);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
@@ -23,7 +23,7 @@ const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEd
     // Update state when the noteToEdit prop changes
     setText(noteToEdit.Text);
     setTitle(noteToEdit.Title);
-    setPriority(noteToEdit.Priority.toString());
+    setSelectedPriority(noteToEdit.Priority.toString());
     setDate(new Date(noteToEdit.NotificationTime));
     setSelectedTime(new Date(noteToEdit.NotificationTime));
   }, [noteToEdit]);
@@ -43,7 +43,7 @@ const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEd
     db.transaction((txn) => {
       txn.executeSql(
         'UPDATE `note` SET Priority = ?, Text = ?, NotificationTime = ?, Title = ? WHERE NoteID = ?',
-        [priority, text, combinedDateTime, title, noteToEdit.NoteID],
+        [selectedPriority, text, combinedDateTime, title, noteToEdit.NoteID],
         (_, result) => {
           console.log('Note updated successfully');
           hideEditNote();
@@ -107,7 +107,7 @@ const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEd
 
       <View style={styles.inputRow}>
         <Text>Priority</Text>
-        <Picker selectedValue={priority} onValueChange={setPriority} style={styles.picker}>
+        <Picker selectedValue={selectedPriority} onValueChange={setSelectedPriority} style={styles.picker}>
           <Picker.Item label="1" value="1" />
           <Picker.Item label="2" value="2" />
           <Picker.Item label="3" value="3" />
@@ -158,38 +158,38 @@ const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEd
 };
 
 const styles = StyleSheet.create({
-  button: {
-    marginBottom: 10,
-    marginLeft: 0,
-    height: 26,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 2,
-    paddingVertical: 2,
-    borderRadius: 6,
-    elavation: 3,
-    backroundColor: 'black',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
-    width: '70%',
-  },
-
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-});
+    button: {
+      marginBottom: 10,
+      marginLeft: 0,
+      height: 26,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 2,
+      paddingVertical: 2,
+      borderRadius: 6,
+      elevation: 3, // Fix the typo here
+      backgroundColor: 'black', // Fix the typo here
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+  
+    input: {
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      marginBottom: 12,
+      paddingHorizontal: 8,
+      width: '70%',
+    },
+  
+    inputRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+  });
 
 export default EditNoteComponent;
