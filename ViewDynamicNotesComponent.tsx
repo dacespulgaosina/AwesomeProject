@@ -72,6 +72,8 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
 {dynamicNotes.map((alert) => (
                   <AlertCard key={alert.DynamicNoteID}
                     note={alert}
+                    db = {db}
+                    alertId={alert.DynamicNoteID}
                    />
                 ))}
 
