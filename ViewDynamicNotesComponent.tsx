@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
+import AlertCard from './AlertCard';
 
 interface ViewDynamicNotesProps {
   hideAddNote: () => void;
@@ -7,6 +8,7 @@ interface ViewDynamicNotesProps {
 
 const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
     const [dynamicNotes, setDynamicNotes] = useState([]);
+    //const [alerts, setAlerts] = useState([]);
 
     useEffect(() => {
         // Fetch data from the DynamicNote table when the component mounts
@@ -22,6 +24,7 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
       const fetchData = () => {
         const today = new Date();
         const formattedDate = today.toISOString().split('T')[0];
+        const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       
         db.transaction((txn) => {
           // Modify the query to include a JOIN and conditions for InputParameter and date
@@ -30,10 +33,11 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
             FROM DynamicNoteValue
             LEFT JOIN DynamicNote ON DynamicNoteValue.DynamicNoteID = DynamicNote.DynamicNoteID
             WHERE DynamicNoteValue.InputParameter IS NULL
-              AND DynamicNoteValue.MyDate = ?
+              AND DynamicNoteValue.MyDate >= ?
+              AND DynamicNoteValue.MyDate <= ?
           `;
           
-          txn.executeSql(query, [formattedDate], (tx, res) => {
+          txn.executeSql(query, [formattedDate, tomorrow], (tx, res) => {
             const fetchedDynamicNotes = [];
             for (let i = 0; i < res.rows.length; ++i) {
               fetchedDynamicNotes.push(res.rows.item(i));
@@ -64,6 +68,12 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
           </View>
         )}
       />
+
+{dynamicNotes.map((alert) => (
+                  <AlertCard key={alert.DynamicNoteID}
+                    note={alert}
+                   />
+                ))}
 
 <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
