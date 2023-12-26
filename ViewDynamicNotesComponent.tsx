@@ -20,14 +20,26 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
 
 
       const fetchData = () => {
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+      
         db.transaction((txn) => {
-          txn.executeSql('SELECT * FROM DynamicNote', [], (tx, res) => {
+          // Modify the query to include a JOIN and conditions for InputParameter and date
+          const query = `
+            SELECT DynamicNoteValue.*, DynamicNote.Title
+            FROM DynamicNoteValue
+            LEFT JOIN DynamicNote ON DynamicNoteValue.DynamicNoteID = DynamicNote.DynamicNoteID
+            WHERE DynamicNoteValue.InputParameter IS NULL
+              AND DynamicNoteValue.MyDate = ?
+          `;
+          
+          txn.executeSql(query, [formattedDate], (tx, res) => {
             const fetchedDynamicNotes = [];
             for (let i = 0; i < res.rows.length; ++i) {
               fetchedDynamicNotes.push(res.rows.item(i));
             }
             setDynamicNotes(fetchedDynamicNotes);
-    
+      
             // Log the fetched dynamic notes to the console
             console.log('Fetched Dynamic Notes:', fetchedDynamicNotes);
           });

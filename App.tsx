@@ -6,7 +6,7 @@
  */
 
 //EKRĀNS NESKRULLĒJAS LĪDZ APAKŠAI
-
+//IZDRUKĀT DYNAMICNOTEVALUES KUR INPUTVALUE IR NULL UN DATUMS IR ŠODIENA. Lai tas ir redzams atverot view alerts. tur parādīsies joins jo vajadzēs izdrukāt title
 
 
 import React, { useEffect, useState } from 'react';
@@ -45,6 +45,7 @@ import AddNoteComponent from './AddNoteComponent';
 import AddDynamicNoteComponent from './AddDynamicNoteComponent';
 import NoteCard from './NoteCard';
 import ViewDynamicNoteComponent from './ViewDynamicNoteComponent';
+import EditNoteComponent from './EditNoteComponent';
 
 
 interface Istate {
@@ -71,6 +72,7 @@ class MyComponent extends React.Component {
       selectedValue: '',
       inputValue: '',
       notes: [],
+      selectedNoteForEditing: null,
       backgroundStyle: {
         backgroundColor: false ? Colors.darker : Colors.lighter,
       },
@@ -86,6 +88,13 @@ class MyComponent extends React.Component {
     );
 
   }
+  handleEditNote = (note) => {
+    console.log('Editing note:', note);
+    this.setState({
+      selectedNoteForEditing: note,
+    });
+  };
+
 
   componentDidMount() {
     // Code to run when the component is first mounted
@@ -441,91 +450,102 @@ const query3 = `CREATE TABLE IF NOT EXISTS DynamicNoteValue (
         <Stack.Screen name="NoteList" component={NoteListScreen} />
       </Stack.Navigator>
   */}
-
-        {(this.state.showAddNote == 0) ? (
-          <View style={styles.container}>
-            <View style={styles.searchContainer}>
-
-              <TextInput
-                style={styles.input}
-                placeholder="Search..."
-                placeholderTextColor="#A0A0A0"
-                underlineColorAndroid="transparent"
-                onChangeText={this.handleSearchTermChange}
-              />
-              <TouchableOpacity onPress={this.handleSearch}>
-            <Image
-              source={require('./search-icon.png')}
-              style={styles.searchIcon}
-            />
-          </TouchableOpacity>
-            </View>
-
-
-
-            <View style={styles.container}>
-              <View style={styles.inputRow}>
-                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
-                  <Text style={styles.buttonText}>Add Note</Text>
-                </Pressable>
-                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
-                  <Text style={styles.buttonText}>Drop</Text>
-                </Pressable>
-                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
-                  <Text style={styles.buttonText}>Create DB</Text>
-                </Pressable>
-              </View>
-            </View>
-
-            <View style={styles.container}>
-              <View style={styles.inputRow}>
-                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addDynamicNote}>
-                  <Text style={styles.buttonText}>Add Dynacmic Note</Text>
-                </Pressable>
-                <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.viewDynamicNotes}>
-                <Text style={styles.buttonText}>View Alerts</Text>
-              </Pressable>
-              </View>
-            </View>
-            <View style={styles.container}>
-              <View style={styles.container}>
-                <Text style={styles.label}>Sort by:</Text>
-                <Picker
-                  selectedValue={this.state.selectedValue}
-                  onValueChange={this.handlePickerChange}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Select" value="" />
-                  <Picker.Item label="Priority" value="priority" />
-                  <Picker.Item label="Newest First" value="newest" />
-                  <Picker.Item label="Due Date" value="dueDate" />
-                  <Picker.Item label="Title" value="title" />
-                </Picker>
-              </View>
-            </View>
-            <ScrollView>
-              <Text>My notes</Text>
-              {this.state.notes.map((note) => (
-                <NoteCard key={note.NoteID} note={note} />
-              ))}
-            </ScrollView>
-          </View>
-
+        {this.state.selectedNoteForEditing ? (
+          <EditNoteComponent
+            hideEditNote={() => this.setState({ selectedNoteForEditing: null })}
+            db={this.db}
+            noteToEdit={this.state.selectedNoteForEditing}
+          />
         ) : (
+
+          (this.state.showAddNote == 0) ? (
+            <View style={styles.container}>
+              <View style={styles.searchContainer}>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Search..."
+                  placeholderTextColor="#A0A0A0"
+                  underlineColorAndroid="transparent"
+                  onChangeText={this.handleSearchTermChange}
+                />
+                <TouchableOpacity onPress={this.handleSearch}>
+                  <Image
+                    source={require('./search-icon.png')}
+                    style={styles.searchIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+
+
+
+              <View style={styles.container}>
+                <View style={styles.inputRow}>
+                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
+                    <Text style={styles.buttonText}>Add Note</Text>
+                  </Pressable>
+                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
+                    <Text style={styles.buttonText}>Drop</Text>
+                  </Pressable>
+                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
+                    <Text style={styles.buttonText}>Create DB</Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              <View style={styles.container}>
+                <View style={styles.inputRow}>
+                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addDynamicNote}>
+                    <Text style={styles.buttonText}>Add Dynacmic Note</Text>
+                  </Pressable>
+                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.viewDynamicNotes}>
+                    <Text style={styles.buttonText}>View Alerts</Text>
+                  </Pressable>
+                </View>
+              </View>
+              <View style={styles.container}>
+                <View style={styles.container}>
+                  <Text style={styles.label}>Sort by:</Text>
+                  <Picker
+                    selectedValue={this.state.selectedValue}
+                    onValueChange={this.handlePickerChange}
+                    style={styles.picker}
+                  >
+                    <Picker.Item label="Select" value="" />
+                    <Picker.Item label="Priority" value="priority" />
+                    <Picker.Item label="Newest First" value="newest" />
+                    <Picker.Item label="Due Date" value="dueDate" />
+                    <Picker.Item label="Title" value="title" />
+                  </Picker>
+                </View>
+              </View>
+              <ScrollView>
+                <Text>My notes</Text>
+                {this.state.notes.map((note) => (
+                  <NoteCard key={note.NoteID}
+                    note={note}
+                    onEditPress={this.handleEditNote} />
+                ))}
+              </ScrollView>
+            </View>
+
+          ) : (
             <>
               {this.state.showAddNote == 1 ? (
                 <AddNoteComponent hideAddNote={this.addNote2} db={this.db} />
               ) : (
                 <>
-                {this.state.showAddNote == 2 ? (
-                <AddDynamicNoteComponent hideAddNote={this.addNote2} db={this.db} />
-                ) : (
-                  <ViewDynamicNotesComponent hideAddNote={this.addNote2} db={this.db}/>
-                )}
+                  {this.state.showAddNote == 2 ? (
+                    <AddDynamicNoteComponent hideAddNote={this.addNote2} db={this.db} />
+                  ) : (
+                    <ViewDynamicNotesComponent hideAddNote={this.addNote2} db={this.db} />
+                  )}
+                </>
+              )}
             </>
-          )}
-        </>
+          )
         )}
+
       </SafeAreaView>
     );
   }

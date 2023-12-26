@@ -1,12 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const NoteCard = ({ note }) => {
+const NoteCard = ({ note, onEditPress }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{note.Title}</Text>
       <Text style={styles.text}>{note.Text}</Text>
       <Text style={styles.dueDate}>Due Date: {note.NotificationTime}</Text>
+      <TouchableOpacity onPress={() => onEditPress(note)}>
+        <Text style={styles.editButton}>Edit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -32,6 +35,10 @@ const styles = StyleSheet.create({
   dueDate: {
     fontSize: 14,
     color: '#888',
+  },
+  editButton: {
+    color: 'blue',
+    marginTop: 8,
   },
 });
 
