@@ -396,7 +396,7 @@ class MyComponent extends React.Component {
       orderBy = ' ORDER BY `NotificationTime`';
     }
     else if (itemValue == 'newest') {
-      orderBy = ' ORDER BY `CreationTime`';
+      orderBy = ' ORDER BY `CreationTime` desc';
     }
 
     this.db.transaction((txn) => {
