@@ -46,6 +46,7 @@ import AddDynamicNoteComponent from './AddDynamicNoteComponent';
 import NoteCard from './NoteCard';
 import ViewDynamicNoteComponent from './ViewDynamicNoteComponent';
 import EditNoteComponent from './EditNoteComponent';
+import ViewGraphsScreen from './ViewGraphsScreen';
 
 
 interface Istate {
@@ -307,6 +308,13 @@ class MyComponent extends React.Component {
     this.setState({ showAddNote: 3 });
   };
 
+  viewGraphs = () => {
+    // Add the logic for handling the "View Graphs" button press
+    console.log('View Graphs button pressed');
+    // Add any other actions or navigation logic here
+    this.setState({ showAddNote: 4 });
+  };
+
   dropTables = () => {
     //var SQLite = require('react-native-sqlite-storage');
 
@@ -529,12 +537,15 @@ class MyComponent extends React.Component {
 
               <View style={styles.container}>
                 <View style={styles.inputRow}>
-                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.addDynamicNote}>
-                    <Text style={styles.buttonText}>Add Dynacmic Note</Text>
-                  </Pressable>
-                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '48%' }]} onPress={this.viewDynamicNotes}>
-                    <Text style={styles.buttonText}>View Alerts</Text>
-                  </Pressable>
+                    <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '40%' }]} onPress={this.addDynamicNote}>
+                      <Text style={styles.buttonText}>Add Dynacmic Note</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.viewDynamicNotes}>
+                      <Text style={styles.buttonText}>View Alerts</Text>
+                    </Pressable>
+                    <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.viewGraphs}>
+                      <Text style={styles.buttonText}>View Graphs</Text>
+                    </Pressable>
                 </View>
               </View>
               <View style={styles.container}>
@@ -572,17 +583,24 @@ class MyComponent extends React.Component {
                   {this.state.showAddNote == 2 ? (
                     <AddDynamicNoteComponent hideAddNote={this.addNote2} db={this.db} />
                   ) : (
+                    <>
+                    {this.state.showAddNote == 3 ? (
                     <ViewDynamicNotesComponent hideAddNote={this.addNote2} db={this.db} />
+                     ) : (
+                      <ViewGraphsScreen hideAddNote={this.addNote2} db={this.db} />
                   )}
                 </>
               )}
             </>
+              )}
+            </>  
           )
         )}
-
       </SafeAreaView>
     );
   }
+
+
 }
 const styles = StyleSheet.create({
   button: {
