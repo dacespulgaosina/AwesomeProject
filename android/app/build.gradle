@@ -1,6 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
-//apply plugin: "com.google.gms.google-services"
+apply plugin: 'com.google.gms.google-services'
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -142,6 +142,7 @@ dependencies {
   //implementation project(':react-native-sqlite-storage')
 
  // implementation 'com.google.gms:google-services'
+  implementation 'com.horcrux:react-native-svg:13.1.0'
 }
 
 

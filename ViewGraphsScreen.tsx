@@ -1,5 +1,6 @@
 // ViewGraphsScreen.tsx
 
+import { LineChart } from 'react-native-chart-kit';
 import React from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 
@@ -11,6 +12,16 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
 
 
 
+  const data = {
+    labels: ['Dec 30', 'Dec 31', 'Jan 1', 'Jan 2', 'Jan 3', 'Jan 4'],
+    datasets: [
+      {
+        data: [33, 34.5, 20.9, 18.3, 29, 22.1],
+      },
+    ],
+  };
+
+
   const cancel = () => {
     console.log('cancel');
     hideAddNote();
@@ -19,22 +30,58 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
 
 
   return (
-    <View>
-      <Text>This is the View Graphs screen</Text>
-      {/* Add your graph components or logic here */}
-
-      <View style={styles.inputRow}>
+<View style={styles.container}>
+<Text style={styles.chartTitle}>Line Chart Example</Text>
+<View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
         <Text style={styles.buttonText}>Back</Text>
       </Pressable>
     </View>
-    </View>
+<LineChart
+  data={data}
+  width={350}
+  height={200}
+  yAxisLabel=""
+  chartConfig={{
+    backgroundColor: '#ffffff',
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
+    decimalPlaces: 1,
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '6',
+      strokeWidth: '2',
+      stroke: '#ffa726',
+    },
+  }}
+  bezier
+  style={styles.chart}
+/>
+</View>
 
     
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  chart: {
+    marginVertical: 8,
+    borderRadius: 16,
+  },
   button: {
     marginBottom: 10,
     marginLeft: 0,
