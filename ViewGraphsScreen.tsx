@@ -37,7 +37,8 @@ function convertIsoToDateShort(isoDate) {
 
 const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
 
-  const [dynamicNotes, setDynamicNotes] = useState([{"DynamicNoteID": 1, "Title": "Dynamic 1"}, {"DynamicNoteID": 2, "Title": "Dynamic 2 "}, {"DynamicNoteID": 3, "Title": "Dynamic 3 "}, {"DynamicNoteID": 4, "Title": "Dynamic 3 4 "}]);
+  //const [dynamicNotes, setDynamicNotes] = useState([{"DynamicNoteID": 1, "Title": "Dynamic 1"}, {"DynamicNoteID": 2, "Title": "Dynamic 2 "}, {"DynamicNoteID": 3, "Title": "Dynamic 3 "}, {"DynamicNoteID": 4, "Title": "Dynamic 3 4 "}]);
+  const [dynamicNotes, setDynamicNotes] = useState([]);
   const [selectedValue, setSelectedValue] = useState(0);
 
   useEffect(() => {
@@ -46,17 +47,19 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
     getDynamicNoteIdTitlePairs()
     .then(data => {
       console.log('In useEffect: ', data);
-      //setDynamicNotes(data);
+      setDynamicNotes(data);
       // You can now use the data as needed, e.g., pass it to your component state
     })
     .catch(error => console.error('Error fetching data:', error));
 
+    //setSelectedValue(dynamicNotes[0].DynamicNoteID)
     // Add any other initialization logic here
   }, []);
 
  
   const handlePickerChange = (itemValue: string) => {
-    console.log('handle picker change');
+    console.log('Selected Value:', itemValue);
+    setSelectedValue(itemValue);
   }
 
  const getDynamicNoteIdTitlePairs = (): Promise<DynamicNote[]> => {
@@ -65,7 +68,7 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
         const query = 'SELECT DynamicNoteID, Title FROM DynamicNote';
         tx.executeSql(query, [], (_, result) => {
           const rows: ResultSetRowList = result.rows;
-          const pairs: DynamicNote[] = [];
+          const pairs: DynamicNote[] = [{"DynamicNoteID": -1, "Title": "Select Dynamic Note"}];
 
           for (let i = 0; i < rows.length; i++) {
             const row = rows.item(i);
@@ -139,19 +142,7 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
     </View>
 <View style={styles.inputRow}>
 
-{/* <Picker
-        selectedValue='1'
-        onValueChange={handlePickerChange}
-        style={styles.picker}
-      >
-        {dynamicNotes.map(note => (
-          <Picker.Item
-            key={note.DynamicNoteID}
-            label={note.Title}
-            value={note.DynamicNoteID}
-          />
-        ))}
-      </Picker> */}
+
 
 <>
     {dynamicNotes.length > 0 ? (
@@ -170,25 +161,13 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
           />
         ))}
       </Picker>
-       <Text>Dynamic notes available {dynamicNotes.length}</Text>
+       {/* <Text>Dynamic notes available {dynamicNotes.length}</Text> */}
        </>
     ) : (
       <Text>No dynamic notes available</Text>
       // You can provide a different message or UI for when the array is empty
     )}
   </>
-
-{/* <Picker
-                    selectedValue={selectedValue}
-                    onValueChange={handlePickerChange}
-                    style={styles.picker}
-                  >
-                    <Picker.Item label="Select" value="" />
-                    <Picker.Item label="Priority" value="priority" />
-                    <Picker.Item label="Newest First" value="newest" />
-                    <Picker.Item label="Due Date" value="dueDate" />
-                    <Picker.Item label="Title" value="title" />
-                  </Picker> */}
 
 
 </View>
@@ -299,7 +278,7 @@ const styles = StyleSheet.create({
   picker: {
     borderWidth: 2,
     borderColor: '#A0A0A0',
-    width: 150, // Adjust the width as needed
+    width: '90%', // Adjust the width as needed
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
