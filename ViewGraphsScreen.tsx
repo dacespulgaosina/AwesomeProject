@@ -8,19 +8,62 @@ interface ViewGraphsScreenProps {
   hideAddNote: () => void;
 }
 
+function convertIsoToDateShort(isoDate) {
+  const dateObject = new Date(isoDate);
+  
+  // Define months in short format
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+
+  // Get month and day
+  const month = months[dateObject.getMonth()];
+  const day = dateObject.getDate();
+
+  // Create short date string
+  const shortDateString = `${month} ${day}`;
+
+  return shortDateString;
+}
+
+
 const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
 
 
 
-  const data = {
-    labels: ['Dec 30', 'Dec 31', 'Jan 1', 'Jan 2', 'Jan 3', 'Jan 4'],
-    datasets: [
-      {
-        data: [33, 34.5, 20.9, 18.3, 29, 22.1],
-      },
-    ],
-  };
+  // const data = {
+  //   labels: ['Dec 30', 'Dec 31', 'Jan 1', 'Jan 2', 'Jan 3', 'Jan 4', 'Jan 5'],
+  //   datasets: [
+  //     {
+  //       data: [33, 34.5, 20.9, null, 18.3, 29, 22.1],
+  //     },
+  //   ],
+  // };
 
+  const data = [
+    { date: '2023-12-30', value: 33 },
+    { date: '2023-12-31', value: 34.5 },
+    // Gap in data on January 1, 2023
+    // Omit the data point for January 1, 2023
+    //{ date: '2023-01-01', value: null },
+    { date: '2023-01-02', value: 20.9 },
+    { date: '2023-01-03', value: 18.3 },
+    { date: '2023-01-04', value: 29 },
+    { date: '2023-01-05', value: 22.1 },
+  ];
+
+  const mydates = data.map((item) => convertIsoToDateShort(item.date));
+  const myvalues = data.map((item) => item.value);
+
+  const mydata = {
+      labels: mydates,
+      datasets: [
+        {
+          data: myvalues,
+        },
+      ],
+    };
 
   const cancel = () => {
     console.log('cancel');
@@ -38,7 +81,7 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
       </Pressable>
     </View>
 <LineChart
-  data={data}
+  data={mydata}
   width={350}
   height={200}
   yAxisLabel=""
