@@ -8,6 +8,12 @@ interface ViewGraphsScreenProps {
   hideAddNote: () => void;
 }
 
+interface DynamicNote {
+  DynamicNoteID: number;
+  Title: string;
+}
+
+
 function convertIsoToDateShort(isoDate) {
   const dateObject = new Date(isoDate);
   
@@ -30,7 +36,26 @@ function convertIsoToDateShort(isoDate) {
 
 const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
 
+ const getDynamicNoteIdTitlePairs = (): Promise<DynamicNote[]> => {
+    return new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        const query = 'SELECT DynamicNoteID, Title FROM DynamicNote';
+        tx.executeSql(query, [], (_, result) => {
+          const rows: ResultSetRowList = result.rows;
+          const pairs: DynamicNote[] = [];
 
+          for (let i = 0; i < rows.length; i++) {
+            const row = rows.item(i);
+            pairs.push({ DynamicNoteID: row.DynamicNoteID, Title: row.Title });
+          }
+
+          resolve(pairs);
+        }, error => {
+          reject(error);
+        });
+      });
+    });
+  }
 
   // const data = {
   //   labels: ['Dec 30', 'Dec 31', 'Jan 1', 'Jan 2', 'Jan 3', 'Jan 4', 'Jan 5'],
@@ -66,8 +91,17 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
     };
 
   const cancel = () => {
+    
+    getDynamicNoteIdTitlePairs()
+    .then(data => {
+      console.log(data);
+      // You can now use the data as needed, e.g., pass it to your component state
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
     console.log('cancel');
     hideAddNote();
+
   }
 
 
