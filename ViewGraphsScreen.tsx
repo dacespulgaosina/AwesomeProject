@@ -14,10 +14,16 @@ interface DynamicNote {
   Title: string;
 }
 
+interface DynamicNoteValues {
+  MyDate: string;
+  InputParameter: number;
+}
+
+
 
 function convertIsoToDateShort(isoDate) {
   const dateObject = new Date(isoDate);
-  
+
   // Define months in short format
   const months = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -35,40 +41,112 @@ function convertIsoToDateShort(isoDate) {
 }
 
 
-const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
+const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({ hideAddNote, db }) => {
 
   //const [dynamicNotes, setDynamicNotes] = useState([{"DynamicNoteID": 1, "Title": "Dynamic 1"}, {"DynamicNoteID": 2, "Title": "Dynamic 2 "}, {"DynamicNoteID": 3, "Title": "Dynamic 3 "}, {"DynamicNoteID": 4, "Title": "Dynamic 3 4 "}]);
   const [dynamicNotes, setDynamicNotes] = useState([]);
   const [selectedValue, setSelectedValue] = useState(0);
+  const [mydata, setMydata] = useState({"datasets": [], "labels": []});
 
   useEffect(() => {
     console.log('Component loaded');
 
     getDynamicNoteIdTitlePairs()
-    .then(data => {
-      console.log('In useEffect: ', data);
-      setDynamicNotes(data);
-      // You can now use the data as needed, e.g., pass it to your component state
-    })
-    .catch(error => console.error('Error fetching data:', error));
+      .then(data => {
+        console.log('In useEffect: ', data);
+        setDynamicNotes(data);
+        // You can now use the data as needed, e.g., pass it to your component state
+      })
+      .catch(error => console.error('Error fetching data:', error));
 
     //setSelectedValue(dynamicNotes[0].DynamicNoteID)
     // Add any other initialization logic here
   }, []);
 
- 
+
   const handlePickerChange = (itemValue: string) => {
     console.log('Selected Value:', itemValue);
     setSelectedValue(itemValue);
+
+    const myPromise = new Promise((resolve, reject) => {
+      db.transaction(tx => {
+        const query = 'SELECT MyDate, InputParameter FROM DynamicNoteValue WHERE DynamicNoteID = ?';
+        tx.executeSql(query, [itemValue], (_, result) => {
+          const rows: ResultSetRowList = result.rows;
+          const pairs: DynamicNoteValues[] = [];
+
+          for (let i = 0; i < rows.length; i++) {
+            const row = rows.item(i);
+            pairs.push({ MyDate: row.MyDate, InputParameter: row.InputParameter });
+          }
+
+          resolve(pairs);
+        }, error => {
+          reject(error);
+        });
+      });
+    });
+
+    myPromise
+      .then(data => {
+        console.log('In useEffect: ', data);
+
+        const mydates = data.map((item) => convertIsoToDateShort(item.MyDate));
+        const myvalues = data.map((item) => item.InputParameter);
+
+        const localMydata = {
+          labels: mydates,
+          datasets: [
+            {
+              data: myvalues,
+            },
+          ],
+        };
+
+        setMydata(localMydata);
+
+        // You can now use the data as needed, e.g., pass it to your component state
+      })
+      .catch(error => console.error('Error fetching data:', error));
+
+    // const data = [
+    //   { MyDate: '2023-12-30', InputParameter: 33 },
+    //   { MyDate: '2023-12-31', InputParameter: 34.5 },
+    //   // Gap in data on January 1, 2023
+    //   // Omit the data point for January 1, 2023
+    //   //{ date: '2023-01-01', value: null },
+    //   { MyDate: '2023-01-02', InputParameter: 20.9 },
+    //   { MyDate: '2023-01-03', InputParameter: 18.3 },
+    //   { MyDate: '2023-01-04', InputParameter: 29 },
+    //   { MyDate: '2023-01-05', InputParameter: 22.1 },
+    // ];
+  
+    // const mydates = data.map((item) => convertIsoToDateShort(item.MyDate));
+    // const myvalues = data.map((item) => item.InputParameter);
+
+    // const localMydata = {
+    //   labels: mydates,
+    //   datasets: [
+    //     {
+    //       data: myvalues,
+    //     },
+    //   ],
+    // };
+  
+    // setMydata(localMydata);
+
+   // console.log(localMydata);
+
+
   }
 
- const getDynamicNoteIdTitlePairs = (): Promise<DynamicNote[]> => {
+  const getDynamicNoteIdTitlePairs = (): Promise<DynamicNote[]> => {
     return new Promise((resolve, reject) => {
       db.transaction(tx => {
         const query = 'SELECT DynamicNoteID, Title FROM DynamicNote';
         tx.executeSql(query, [], (_, result) => {
           const rows: ResultSetRowList = result.rows;
-          const pairs: DynamicNote[] = [{"DynamicNoteID": -1, "Title": "Select Dynamic Note"}];
+          const pairs: DynamicNote[] = [{ "DynamicNoteID": -1, "Title": "Select Dynamic Note" }];
 
           for (let i = 0; i < rows.length; i++) {
             const row = rows.item(i);
@@ -92,32 +170,32 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
   //   ],
   // };
 
-  const data = [
-    { date: '2023-12-30', value: 33 },
-    { date: '2023-12-31', value: 34.5 },
-    // Gap in data on January 1, 2023
-    // Omit the data point for January 1, 2023
-    //{ date: '2023-01-01', value: null },
-    { date: '2023-01-02', value: 20.9 },
-    { date: '2023-01-03', value: 18.3 },
-    { date: '2023-01-04', value: 29 },
-    { date: '2023-01-05', value: 22.1 },
-  ];
+  // const data = [
+  //   { date: '2023-12-30', value: 33 },
+  //   { date: '2023-12-31', value: 34.5 },
+  //   // Gap in data on January 1, 2023
+  //   // Omit the data point for January 1, 2023
+  //   //{ date: '2023-01-01', value: null },
+  //   { date: '2023-01-02', value: 20.9 },
+  //   { date: '2023-01-03', value: 18.3 },
+  //   { date: '2023-01-04', value: 29 },
+  //   { date: '2023-01-05', value: 22.1 },
+  // ];
 
-  const mydates = data.map((item) => convertIsoToDateShort(item.date));
-  const myvalues = data.map((item) => item.value);
+  // const mydates = data.map((item) => convertIsoToDateShort(item.date));
+  // const myvalues = data.map((item) => item.value);
 
-  const mydata = {
-      labels: mydates,
-      datasets: [
-        {
-          data: myvalues,
-        },
-      ],
-    };
+  // const mydata = {
+  //   labels: mydates,
+  //   datasets: [
+  //     {
+  //       data: myvalues,
+  //     },
+  //   ],
+  // };
 
   const cancel = () => {
-    
+
     // getDynamicNoteIdTitlePairs()
     // .then(data => {
     //   console.log(data);
@@ -133,72 +211,78 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
 
 
   return (
-<View style={styles.container}>
-<Text style={styles.chartTitle}>Line Chart Example</Text>
-<View style={styles.inputRow}>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
-        <Text style={styles.buttonText}>Back</Text>
-      </Pressable>
-    </View>
-<View style={styles.inputRow}>
+    <View style={styles.container}>
+      <Text style={styles.chartTitle}>Line Chart Example</Text>
+      <View style={styles.inputRow}>
+        <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
+          <Text style={styles.buttonText}>Back</Text>
+        </Pressable>
+      </View>
+      <View style={styles.inputRow}>
 
 
 
-<>
-    {dynamicNotes.length > 0 ? (
+        <>
+          {dynamicNotes.length > 0 ? (
+            <>
+              <Picker
+                selectedValue='1'
+                onValueChange={handlePickerChange}
+                style={styles.picker}
+              >
+                {dynamicNotes.map(note => (
+
+                  <Picker.Item
+                    key={note.DynamicNoteID}
+                    label={note.Title}
+                    value={note.DynamicNoteID}
+                  />
+                ))}
+              </Picker>
+              {/* <Text>Dynamic notes available {dynamicNotes.length}</Text> */}
+            </>
+          ) : (
+            <Text>No dynamic notes available</Text>
+            // You can provide a different message or UI for when the array is empty
+          )}
+        </>
+
+
+      </View>
       <>
-      <Picker
-        selectedValue='1'
-        onValueChange={handlePickerChange}
-         style={styles.picker}
-      > 
-        {dynamicNotes.map(note => (
-          
-          <Picker.Item
-            key={note.DynamicNoteID}
-            label={note.Title}
-            value={note.DynamicNoteID}
-          />
-        ))}
-      </Picker>
-       {/* <Text>Dynamic notes available {dynamicNotes.length}</Text> */}
-       </>
-    ) : (
-      <Text>No dynamic notes available</Text>
-      // You can provide a different message or UI for when the array is empty
-    )}
-  </>
+          {mydata.labels.length > 0 ? (
+      <LineChart
+        data={mydata}
+        width={350}
+        height={200}
+        yAxisLabel=""
+        chartConfig={{
+          backgroundColor: '#ffffff',
+          backgroundGradientFrom: '#ffffff',
+          backgroundGradientTo: '#ffffff',
+          decimalPlaces: 1,
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          style: {
+            borderRadius: 16,
+          },
+          propsForDots: {
+            r: '6',
+            strokeWidth: '2',
+            stroke: '#ffa726',
+          },
+        }}
+        bezier
+        style={styles.chart}
+      />
+      ) : (
+        <Text>No dynamic notes selected: {mydata.length}</Text>
+        // You can provide a different message or UI for when the array is empty
+      )}
+    </>
+    </View>
 
 
-</View>
-
-<LineChart
-  data={mydata}
-  width={350}
-  height={200}
-  yAxisLabel=""
-  chartConfig={{
-    backgroundColor: '#ffffff',
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
-    decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    style: {
-      borderRadius: 16,
-    },
-    propsForDots: {
-      r: '6',
-      strokeWidth: '2',
-      stroke: '#ffa726',
-    },
-  }}
-  bezier
-  style={styles.chart}
-/>
-</View>
-
-    
   );
 };
 
