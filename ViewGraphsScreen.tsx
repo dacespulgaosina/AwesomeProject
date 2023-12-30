@@ -1,8 +1,9 @@
 // ViewGraphsScreen.tsx
 
 import { LineChart } from 'react-native-chart-kit';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 interface ViewGraphsScreenProps {
   hideAddNote: () => void;
@@ -35,6 +36,28 @@ function convertIsoToDateShort(isoDate) {
 
 
 const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
+
+  const [dynamicNotes, setDynamicNotes] = useState([{"DynamicNoteID": 1, "Title": "Dynamic 1"}, {"DynamicNoteID": 2, "Title": "Dynamic 2 "}, {"DynamicNoteID": 3, "Title": "Dynamic 3 "}, {"DynamicNoteID": 4, "Title": "Dynamic 3 4 "}]);
+  const [selectedValue, setSelectedValue] = useState(0);
+
+  useEffect(() => {
+    console.log('Component loaded');
+
+    getDynamicNoteIdTitlePairs()
+    .then(data => {
+      console.log('In useEffect: ', data);
+      //setDynamicNotes(data);
+      // You can now use the data as needed, e.g., pass it to your component state
+    })
+    .catch(error => console.error('Error fetching data:', error));
+
+    // Add any other initialization logic here
+  }, []);
+
+ 
+  const handlePickerChange = (itemValue: string) => {
+    console.log('handle picker change');
+  }
 
  const getDynamicNoteIdTitlePairs = (): Promise<DynamicNote[]> => {
     return new Promise((resolve, reject) => {
@@ -92,12 +115,12 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
 
   const cancel = () => {
     
-    getDynamicNoteIdTitlePairs()
-    .then(data => {
-      console.log(data);
-      // You can now use the data as needed, e.g., pass it to your component state
-    })
-    .catch(error => console.error('Error fetching data:', error));
+    // getDynamicNoteIdTitlePairs()
+    // .then(data => {
+    //   console.log(data);
+    //   // You can now use the data as needed, e.g., pass it to your component state
+    // })
+    // .catch(error => console.error('Error fetching data:', error));
 
     console.log('cancel');
     hideAddNote();
@@ -114,6 +137,62 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) =>
         <Text style={styles.buttonText}>Back</Text>
       </Pressable>
     </View>
+<View style={styles.inputRow}>
+
+{/* <Picker
+        selectedValue='1'
+        onValueChange={handlePickerChange}
+        style={styles.picker}
+      >
+        {dynamicNotes.map(note => (
+          <Picker.Item
+            key={note.DynamicNoteID}
+            label={note.Title}
+            value={note.DynamicNoteID}
+          />
+        ))}
+      </Picker> */}
+
+<>
+    {dynamicNotes.length > 0 ? (
+      <>
+      <Picker
+        selectedValue='1'
+        onValueChange={handlePickerChange}
+         style={styles.picker}
+      > 
+        {dynamicNotes.map(note => (
+          
+          <Picker.Item
+            key={note.DynamicNoteID}
+            label={note.Title}
+            value={note.DynamicNoteID}
+          />
+        ))}
+      </Picker>
+       <Text>Dynamic notes available {dynamicNotes.length}</Text>
+       </>
+    ) : (
+      <Text>No dynamic notes available</Text>
+      // You can provide a different message or UI for when the array is empty
+    )}
+  </>
+
+{/* <Picker
+                    selectedValue={selectedValue}
+                    onValueChange={handlePickerChange}
+                    style={styles.picker}
+                  >
+                    <Picker.Item label="Select" value="" />
+                    <Picker.Item label="Priority" value="priority" />
+                    <Picker.Item label="Newest First" value="newest" />
+                    <Picker.Item label="Due Date" value="dueDate" />
+                    <Picker.Item label="Title" value="title" />
+                  </Picker> */}
+
+
+</View>
+
 <LineChart
   data={mydata}
   width={350}
