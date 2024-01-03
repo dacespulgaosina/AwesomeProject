@@ -7,9 +7,11 @@ const NoteCard = ({ note, onEditPress }) => {
       <Text style={styles.title}>{note.Title}</Text>
       <Text style={styles.text}>{note.Text}</Text>
       <Text style={styles.dueDate}>Due Date: {note.NotificationTime}</Text>
-      <TouchableOpacity onPress={() => onEditPress(note)}>
-        <Text style={styles.editButton}>Edit</Text>
-      </TouchableOpacity>
+      {onEditPress && (
+        <TouchableOpacity onPress={() => onEditPress(note)}>
+          <Text style={styles.editButton}>Edit</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

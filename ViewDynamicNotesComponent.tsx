@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 import AlertCard from './AlertCard';
+import NoteCard from './NoteCard';
 
 interface ViewDynamicNotesProps {
   hideAddNote: () => void;
@@ -8,6 +9,7 @@ interface ViewDynamicNotesProps {
 
 const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote, db}) => {
     const [dynamicNotes, setDynamicNotes] = useState([]);
+    const [plainNotes, setPlainNotes] = useState([]);
     //const [alerts, setAlerts] = useState([]);
 
     useEffect(() => {
@@ -45,8 +47,32 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
             setDynamicNotes(fetchedDynamicNotes);
       
             // Log the fetched dynamic notes to the console
-            console.log('Fetched Dynamic Notes:', fetchedDynamicNotes);
+           // console.log('Fetched Dynamic Notes:', fetchedDynamicNotes);
           });
+
+          const currentTime = today;
+          const currentMinusDay = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+          const query2 = `
+          SELECT Title, Text, NotificationTime
+          FROM note
+          WHERE NotificationTime <= datetime('now', '+2 hours')
+          AND NotificationTime >= datetime('now', '-22 hours');
+        `;
+
+        console.log('viewing plain notes');
+        
+        txn.executeSql(query2, [], (tx, res) => {
+          const fetchedNotes = [];
+          for (let i = 0; i < res.rows.length; ++i) {
+            fetchedNotes.push(res.rows.item(i));
+          }
+          setPlainNotes(fetchedNotes);
+    
+          // Log the fetched dynamic notes to the console
+          console.log('Fetched Plain Notes:', fetchedNotes);
+        });
+
         });
       };
 
@@ -59,11 +85,12 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
       {/* Render the dynamic notes using FlatList or other components */}
       <FlatList
         data={dynamicNotes}
+
         keyExtractor={(item) => item.DynamicNoteID.toString()}
         renderItem={({ item }) => (
           <View>
-            <Text>Title: {item.Title}</Text>
-            <Text>Text: {item.Text}</Text>
+            {/* <Text>Title: {item.Title}</Text>
+            <Text>Text: {item.Text}</Text> */}
             {/* Add more fields as needed */}
           </View>
         )}
@@ -75,6 +102,11 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
                     db = {db}
                     alertId={alert.DynamicNoteID}
                    />
+                ))}
+
+{plainNotes.map((note) => (
+                  <NoteCard key={note.NoteID}
+                    note={note} />
                 ))}
 
 <View style={styles.inputRow}>
