@@ -142,7 +142,7 @@ dependencies {
   //implementation project(':react-native-sqlite-storage')
 
  // implementation 'com.google.gms:google-services'
-  implementation 'com.horcrux:react-native-svg:13.1.0'
+ // implementation 'com.horcrux:react-native-svg:14.1.0'
 }
 
 
