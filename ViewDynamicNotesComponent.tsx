@@ -85,7 +85,7 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
 
   return (
     <View>
-      <Text>This is the ViewDynamicNotesComponent</Text>
+      <Text>This is the View Alerts screen</Text>
       
       <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>

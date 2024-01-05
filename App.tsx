@@ -555,12 +555,12 @@ class MyComponent extends React.Component {
                   <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={this.addNote}>
                     <Text style={styles.buttonText}>Add Note</Text>
                   </Pressable>
-                  <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
+                  {/* <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.dropTables}>
                     <Text style={styles.buttonText}>Drop</Text>
                   </Pressable>
                   <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.createTables}>
                     <Text style={styles.buttonText}>Create DB</Text>
-                  </Pressable>
+                  </Pressable> */}
                 </View>
               </View>
 

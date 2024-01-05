@@ -212,7 +212,7 @@ const ViewGraphsScreen: React.FC<ViewDynamicNotesProps> = ({ hideAddNote, db }) 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.chartTitle}>Line Chart Example</Text>
+      {/* <Text style={styles.chartTitle}>Line Chart Example</Text> */}
       <View style={styles.inputRow}>
         <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
           <Text style={styles.buttonText}>Back</Text>
