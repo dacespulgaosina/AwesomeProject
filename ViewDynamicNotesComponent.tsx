@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, ScrollView } from 'react-native';
 import AlertCard from './AlertCard';
 import NoteCard from './NoteCard';
 
@@ -21,6 +21,10 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
         console.log('cancel');
         hideAddNote();
       }
+
+      const handleDismissNote = (note) => {
+        console.log('Dismissing note:', note);
+      };
 
 
       const fetchData = () => {
@@ -82,6 +86,12 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
   return (
     <View>
       <Text>This is the ViewDynamicNotesComponent</Text>
+      
+      <View style={styles.inputRow}>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
+        <Text style={styles.buttonText}>Back</Text>
+      </Pressable>
+    </View>
       {/* Render the dynamic notes using FlatList or other components */}
       <FlatList
         data={dynamicNotes}
@@ -96,6 +106,7 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
         )}
       />
 
+<ScrollView>
 {dynamicNotes.map((alert) => (
                   <AlertCard key={alert.DynamicNoteID}
                     note={alert}
@@ -106,14 +117,12 @@ const ViewDynamicNotesComponent: React.FC<ViewDynamicNotesProps> = ({hideAddNote
 
 {plainNotes.map((note) => (
                   <NoteCard key={note.NoteID}
-                    note={note} />
+                    note={note} 
+                    onEditPress={null}
+                    onDismissNote={handleDismissNote} />
                 ))}
+</ScrollView>
 
-<View style={styles.inputRow}>
-      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={cancel}>
-        <Text style={styles.buttonText}>Back</Text>
-      </Pressable>
-    </View>
     </View>
   );
 };

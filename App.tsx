@@ -5,9 +5,6 @@
  * @format
  */
 
-//EKRĀNS NESKRULLĒJAS LĪDZ APAKŠAI
-//IZDRUKĀT DYNAMICNOTEVALUES KUR INPUTVALUE IR NULL UN DATUMS IR ŠODIENA. Lai tas ir redzams atverot view alerts. tur parādīsies joins jo vajadzēs izdrukāt title
-
 
 import React, { useEffect, useState } from 'react';
 import type { PropsWithChildren } from 'react';
@@ -383,6 +380,38 @@ class MyComponent extends React.Component {
 
   };
 
+  handleDeleteNote = (note) => {
+    // Implement the logic to delete the note from the database
+    console.log('Deleting note:', note);
+  
+    // Assuming `db` is your SQLite database object
+    this.db.transaction((txn) => {
+      txn.executeSql('DELETE FROM note WHERE NoteID = ?', [note.NoteID], (tx, res) => {
+        console.log('Note deleted successfully');
+        // After deletion, you may want to refresh the notes list or take other actions
+        // For example:
+        this.refreshNotes();
+      });
+    });
+  };
+  
+  // Add a function to refresh the notes list after deletion
+  refreshNotes = () => {
+    // You can fetch the updated notes from the database and update the state
+    // For example:
+    this.db.transaction((txn) => {
+      txn.executeSql('SELECT * FROM note', [], (tx, res) => {
+        const fetchedNotes = [];
+        for (let i = 0; i < res.rows.length; ++i) {
+          fetchedNotes.push(res.rows.item(i));
+        }
+        this.setNotes(fetchedNotes);
+      });
+    });
+  };
+
+
+
 
   handlePickerChange = (itemValue: string) => {
     // Do something with the selected value
@@ -569,7 +598,9 @@ class MyComponent extends React.Component {
                 {this.state.notes.map((note) => (
                   <NoteCard key={note.NoteID}
                     note={note}
-                    onEditPress={this.handleEditNote} />
+                    onEditPress={this.handleEditNote}
+                    onDeletePress={this.handleDeleteNote}
+                    onDismissNote={null}/>
                 ))}
               </ScrollView>
             </View>

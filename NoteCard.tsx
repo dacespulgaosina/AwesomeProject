@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const NoteCard = ({ note, onEditPress }) => {
+const NoteCard = ({ note, onEditPress, onDismissNote, onDeletePress }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{note.Title}</Text>
@@ -11,7 +11,18 @@ const NoteCard = ({ note, onEditPress }) => {
         <TouchableOpacity onPress={() => onEditPress(note)}>
           <Text style={styles.editButton}>Edit</Text>
         </TouchableOpacity>
+      )} 
+      {onDeletePress && (
+        <TouchableOpacity onPress={() => onDeletePress(note)}>
+          <Text style={styles.deleteButton}>Delete</Text>
+        </TouchableOpacity>
       )}
+        {!onEditPress && (
+        <TouchableOpacity onPress={() => onDismissNote(note)}>
+          {/* <Text style={styles.editButton}>Dismiss</Text> */}
+        </TouchableOpacity>
+      )}
+
     </View>
   );
 };
@@ -24,6 +35,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+  deleteButton: {
+    color: 'red',
+    marginTop: 8,
   },
   title: {
     fontSize: 18,
