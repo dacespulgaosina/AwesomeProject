@@ -7,6 +7,7 @@ const NoteCard = ({ note, onEditPress, onDismissNote, onDeletePress }) => {
       <Text style={styles.title}>{note.Title}</Text>
       <Text style={styles.text}>{note.Text}</Text>
       <Text style={styles.dueDate}>Due Date: {note.NotificationTime}</Text>
+      <View style={styles.inputRow}>
       {onEditPress && (
         <TouchableOpacity onPress={() => onEditPress(note)}>
           <Text style={styles.editButton}>Edit</Text>
@@ -17,6 +18,7 @@ const NoteCard = ({ note, onEditPress, onDismissNote, onDeletePress }) => {
           <Text style={styles.deleteButton}>Delete</Text>
         </TouchableOpacity>
       )}
+      </View>
         {!onEditPress && (
         <TouchableOpacity onPress={() => onDismissNote(note)}>
           {/* <Text style={styles.editButton}>Dismiss</Text> */}
@@ -39,6 +41,11 @@ const styles = StyleSheet.create({
   deleteButton: {
     color: 'red',
     marginTop: 8,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: 18,

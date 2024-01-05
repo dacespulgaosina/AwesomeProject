@@ -567,7 +567,7 @@ class MyComponent extends React.Component {
               <View style={styles.container}>
                 <View style={styles.inputRow}>
                     <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '40%' }]} onPress={this.addDynamicNote}>
-                      <Text style={styles.buttonText}>Add Dynacmic Note</Text>
+                      <Text style={styles.buttonText}>Add Dynamic Note</Text>
                     </Pressable>
                     <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '28%' }]} onPress={this.viewDynamicNotes}>
                       <Text style={styles.buttonText}>View Alerts</Text>
