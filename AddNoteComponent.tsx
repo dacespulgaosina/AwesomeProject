@@ -118,7 +118,7 @@ const handleTimeConfirm = (time) => {
 
 
   return <>
-    <Text>Hello World</Text>
+    <Text>Add Note</Text>
 
     <View style={styles.inputRow}>
       <Text>Title</Text><TextInput

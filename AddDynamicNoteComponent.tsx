@@ -63,13 +63,14 @@ const AddDynamicNoteComponent: React.FC<AddNoteProps> = ({hideAddNote, db}) => {
 
 
 const saveNote = () => {
-  const hours = selectedTime.getHours();
-  const minutes = selectedTime.getMinutes();
+  // const hours = selectedTime.getHours();
+  // const minutes = selectedTime.getMinutes();
 
   // Format hours and minutes if needed
-  const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
-  const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
-
+  // const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+  // const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  const formattedHours = 0;
+  const formattedMinutes = 0;
   const formattedTime = `${formattedHours}:${formattedMinutes}`;
 
   const combinedDateTime = `**${date.toISOString().slice(0, 10)}** *${formattedTime}*`;
@@ -142,12 +143,12 @@ const handleTimeConfirm = (time) => {
     </View>
 
       
-      <View style={styles.inputRow}>
+    {/* <View style={styles.inputRow}>
       <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showDatepicker}>
         <Text style={styles.buttonText}>Set due date:</Text>
-      </Pressable>
-     {/* <Text>{formatDateToYYYYMMDD(date)}</Text>*/}
-      {showPicker && (
+      </Pressable> */}
+      {/* <Text>{formatDateToYYYYMMDD(date)}</Text>*/}
+      {/* {showPicker && (
         <DateTimePicker
           testID="dateTimePicker"
           value={date}
@@ -157,10 +158,10 @@ const handleTimeConfirm = (time) => {
           onChange={onChange}
         />
       )}
-        </View>
+    </View> */}
 
-        <View>
-        <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showTimePicker}>
+    {/* <View>
+      <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showTimePicker}>
         <Text style={styles.buttonText}>Set time:</Text>
       </Pressable>
       {selectedTime && <Text>Selected Time: {selectedTime.toLocaleTimeString()}</Text>}
@@ -171,7 +172,7 @@ const handleTimeConfirm = (time) => {
         onConfirm={handleTimeConfirm}
         onCancel={hideTimePicker}
       />
-    </View>
+    </View> */}
 
 
 

@@ -105,7 +105,7 @@ const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEd
         />
       </View>
 
-      <View style={styles.inputRow}>
+      {/* <View style={styles.inputRow}>
         <Text>Priority</Text>
         <Picker selectedValue={selectedPriority} onValueChange={setSelectedPriority} style={styles.picker}>
           <Picker.Item label="1" value="1" />
@@ -113,7 +113,7 @@ const EditNoteComponent: React.FC<EditNoteProps> = ({ hideEditNote, db, noteToEd
           <Picker.Item label="3" value="3" />
           <Picker.Item label="no priority" value="4" />
         </Picker>
-      </View>
+      </View> */}
 
       <View style={styles.inputRow}>
         <Pressable style={[styles.button, { backgroundColor: '#509EFB', width: '38%' }]} onPress={showDatepicker}>
