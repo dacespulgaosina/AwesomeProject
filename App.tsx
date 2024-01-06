@@ -184,30 +184,7 @@ class MyComponent extends React.Component {
     });
 
 
-    // for (const MyID of IDValues) {
-    //   // const MyID = 1; // Replace with the actual DynamicNoteID
-    //   const today = new Date(); // Current date and time
-
-    //   // Call the function and handle the result
-    //   fetchDynamicNoteValues(MyID, today)
-    //     .then((DynamicNoteValues) => {
-    //       console.log('XXXXDynamicNoteValues:', DynamicNoteValues);
-
-    //       // Do something with DynamicNoteValues
-    //       if (DynamicNoteValues.length === 0) {
-    //         console.log('Inserting new DynamicNoteValue');
-    //         this.db.transaction(function (txn) {
-    //           txn.executeSql('INSERT INTO DynamicNoteValue (DynamicNoteID, InputParameter, MyDate) VALUES (:DynamicNoteId, null, CURRENT_TIMESTAMP)', [MyID]);
-
-    //         });
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.error('Error fetching DynamicNoteValues:', error);
-    //     });
-    // }
-
-
+  
     //Ja tāda neeksistē(lietotājs aplikāciju atver pirmo reizi diennaktī), tad dynamic note value ierakstu iespraužam datubāzes dynamicNoteValue datubāzes tabulā
     //Ar skaitlisko vērtību nedefinētu null(visi tekošās dienas ieraksti, vēlāk rādīsies atbildot uz pogu 'View alerts')
 
@@ -424,13 +401,13 @@ class MyComponent extends React.Component {
 
     var orderBy = '';
     if (itemValue == "priority") {
-      orderBy = ' ORDER BY `Priority`';
+      orderBy = ' ORDER BY `Priority` desc';
     }
     else if (itemValue == 'title') {
       orderBy = ' ORDER BY `Title`';
     }
     else if (itemValue == 'dueDate') {
-      orderBy = ' ORDER BY `NotificationTime`';
+      orderBy = ' ORDER BY `NotificationTime` desc';
     }
     else if (itemValue == 'newest') {
       orderBy = ' ORDER BY `CreationTime` desc';
@@ -593,6 +570,7 @@ class MyComponent extends React.Component {
                   </Picker>
                 </View>
               </View>
+              
               <ScrollView>
                 <Text>My notes</Text>
                 {this.state.notes.map((note) => (
