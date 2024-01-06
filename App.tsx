@@ -223,8 +223,8 @@ class MyComponent extends React.Component {
     const searchTerm = this.state.inputValue.trim();
     if (searchTerm) {
       this.db.transaction((txn) => {
-        const query = 'SELECT * FROM note WHERE Title LIKE ?';
-        const params = [`%${searchTerm}%`];
+        const query = 'SELECT * FROM note WHERE Title LIKE ? OR Text LIKE ?';
+      const params = [`%${searchTerm}%`, `%${searchTerm}%`];
 
         txn.executeSql(query, params, (tx, res) => {
           const fetchedNotes = [];
